@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Services</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .providers-list {
+            padding: 0 1rem;
+        }
+
+        .provider-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 8px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .provider-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+
+        .provider-info {
+            flex: 1;
+        }
+
+        .provider-name {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .provider-rating {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        .provider-location {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        .provider-specialty {
+            font-size: 0.875rem;
+            color: #1D4ED8;
+            font-weight: 500;
+        }
+
+        .provider-price {
+            font-weight: 700;
+            color: #1D4ED8;
+            font-size: 1.125rem;
+        }
+
+        .book-button {
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .no-providers {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: white;
+        }
+
+        .no-providers-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-providers-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-providers-text {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title" id="category-title">Services</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div id="services-list" class="providers-list">
+            <!-- Providers will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        const providers = {
+            electrical: [
+                { id: "E01", firstName: "Ashraf", lastName: "Khan", email: "ak.electric@example.com", phone: "0171-1234-567", area: "Dhanmondi", city: "Dhaka", experience: "10 years", rating: 4.8, specialty: "Electrical Wiring", price: 800 },
+                { id: "E02", firstName: "Jamil", lastName: "Ahmed", email: "jamil.electric@example.com", phone: "0165-9999-000", area: "Motijheel", city: "Dhaka", experience: "12 years", rating: 4.6, specialty: "Switch & Socket Installation", price: 750 }
+            ],
+            plumbing: [
+                { id: "P01", firstName: "Farhad", lastName: "Hossain", email: "farhad.plumb@example.com", phone: "0183-5555-111", area: "Mirpur", city: "Dhaka", experience: "15 years", rating: 4.7, specialty: "Pipe Installation", price: 750 },
+                { id: "P02", firstName: "Saima", lastName: "Chowdhury", email: "saima.plumb@example.com", phone: "0156-4444-888", area: "Banani", city: "Dhaka", experience: "9 years", rating: 4.8, specialty: "Bathroom Plumbing", price: 800 }
+            ],
+            cleaning: [
+                { id: "C01", firstName: "Rashida", lastName: "Begum", email: "rashida.clean@example.com", phone: "0171-5555-123", area: "Gulshan", city: "Dhaka", experience: "8 years", rating: 4.8, specialty: "Deep House Cleaning", price: 500 }
+            ],
+            'ac-repair': [
+                { id: "A01", firstName: "Mahbub", lastName: "Alam", email: "mahbub.ac@example.com", phone: "0177-8888-999", area: "Uttara", city: "Dhaka", experience: "8 years", rating: 4.5, specialty: "AC Installation", price: 1500 }
+            ],
+            beauty: [
+                { id: "B01", firstName: "Ruma", lastName: "Sultana", email: "ruma.beauty@example.com", phone: "0171-9999-147", area: "Gulshan", city: "Dhaka", experience: "10 years", rating: 4.9, specialty: "Bridal Makeup", price: 1200 }
+            ],
+            carpentry: [
+                { id: "C01", firstName: "Abdur", lastName: "Rahman", email: "abdur.carpentry@example.com", phone: "0171-4444-555", area: "Mohammadpur", city: "Dhaka", experience: "18 years", rating: 4.8, specialty: "Custom Furniture", price: 900 }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const category = localStorage.getItem('selectedCategory');
+            if (category) {
+                document.getElementById('category-title').textContent = 
+                    category.charAt(0).toUpperCase() + category.slice(1) + ' Services';
+                loadProviders(category);
+            }
+        });
+
+        function loadProviders(category) {
+            const servicesList = document.getElementById('services-list');
+            const categoryProviders = providers[category] || [];
+            
+            if (categoryProviders.length === 0) {
+                servicesList.innerHTML = `
+                    <div class="no-providers">
+                        <div class="no-providers-icon">🔍</div>
+                        <h3 class="no-providers-title">No Providers Available</h3>
+                        <p class="no-providers-text">We're working to add more providers in this category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            categoryProviders.forEach(provider => {
+                const initials = provider.firstName.charAt(0) + provider.lastName.charAt(0);
+                html += `
+                    <div class="provider-card" onclick="showProviderDetails('${provider.id}', '${category}')">
+                        <div class="provider-header">
+                            <div class="provider-avatar">
+                                <span>${initials}</span>
+                            </div>
+                            <div class="provider-info">
+                                <h3 class="provider-name">${provider.firstName} ${provider.lastName}</h3>
+                                <div class="provider-rating">⭐ ${provider.rating} • ${provider.experience}</div>
+                                <div class="provider-location">📍 ${provider.area}, ${provider.city}</div>
+                                <div class="provider-specialty">${provider.specialty}</div>
+                            </div>
+                            <div class="provider-price">৳${provider.price}/hour</div>
+                        </div>
+                        <button class="book-button" onclick="event.stopPropagation(); bookProvider('${provider.id}', '${category}')">
+                            Book Now
+                        </button>
+                    </div>
+                `;
+            });
+            
+            servicesList.innerHTML = html;
+        }
+
+        function showProviderDetails(providerId, category) {
+            localStorage.setItem('selectedProviderId', providerId);
+            localStorage.setItem('selectedCategory', category);
+            window.location.href = 'service-details.html';
+        }
+
+        function bookProvider(providerId, category) {
+            localStorage.setItem('selectedProviderId', providerId);
+            localStorage.setItem('selectedCategory', category);
+            window.location.href = 'booking-form.html';
+        }
+
+        function goBack() {
+            window.location.href = 'customer-dashboard.html';
+        }
+    </script>
+</body>
+</html>

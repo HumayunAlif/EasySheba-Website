@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Splash</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .splash-container {
+            text-align: center;
+            color: white;
+        }
+
+        .splash-logo {
+            animation: pulse 2s infinite;
+            margin-bottom: 2rem;
+        }
+
+        .logo-circle {
+            width: 8rem;
+            height: 8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            margin: 0 auto;
+        }
+
+        .logo-text {
+            font-size: 3.75rem;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.8;
+            margin-bottom: 3rem;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-dots div {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 4px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots div:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots div:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <div class="splash-logo">
+            <div class="logo-circle">
+                <div class="logo-text">ES</div>
+            </div>
+        </div>
+        <h1>EasySheba</h1>
+        <p class="subtitle">Your trusted home service solution</p>
+        <div class="loading-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = 'auth.html';
+        }, 3000);
+    </script>
+</body>
+</html>

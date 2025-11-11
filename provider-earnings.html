@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Earnings</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .earnings-overview {
+            padding: 0 1rem 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .total-earnings {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .earnings-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1D4ED8;
+            margin-bottom: 0.5rem;
+        }
+
+        .earnings-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-primary { color: #22C55E; }
+        .stat-orange { color: #F59E0B; }
+        .stat-purple { color: #8B5CF6; }
+
+        .stat-item p {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .recent-earnings {
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .earnings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .earning-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .earning-item:last-child {
+            border-bottom: none;
+        }
+
+        .earning-info h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+            font-size: 0.875rem;
+        }
+
+        .earning-info p {
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .earning-amount {
+            text-align: right;
+        }
+
+        .amount {
+            font-weight: 700;
+            color: #22C55E;
+            font-size: 0.875rem;
+        }
+
+        .status {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .withdrawal-section {
+            padding: 1.5rem 1rem 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 8px 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-text {
+            font-size: 0.75rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goToDashboard()">←</div>
+        <h1 class="header-title">Earnings</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="earnings-overview">
+            <div class="app-card">
+                <div class="total-earnings">
+                    <div class="earnings-amount">৳45,200</div>
+                    <div class="earnings-label">Total Earnings</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 class="stat-secondary">৳15,500</h3>
+                        <p>This Week</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="stat-orange">৳8,200</h3>
+                        <p>Available</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="stat-purple">127</h3>
+                        <p>Jobs Done</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-earnings">
+            <div class="app-card">
+                <h3 class="section-title">Recent Earnings</h3>
+                <div class="earnings-list">
+                    <div class="earning-item">
+                        <div class="earning-info">
+                            <h4>Plumbing Service</h4>
+                            <p>Jan 15, 2024</p>
+                        </div>
+                        <div class="earning-amount">
+                            <div class="amount">+৳750</div>
+                            <div class="status">Completed</div>
+                        </div>
+                    </div>
+                    <div class="earning-item">
+                        <div class="earning-info">
+                            <h4>Electrical Work</h4>
+                            <p>Jan 14, 2024</p>
+                        </div>
+                        <div class="earning-amount">
+                            <div class="amount">+৳1,200</div>
+                            <div class="status">Completed</div>
+                        </div>
+                    </div>
+                    <div class="earning-item">
+                        <div class="earning-info">
+                            <h4>House Cleaning</h4>
+                            <p>Jan 13, 2024</p>
+                        </div>
+                        <div class="earning-amount">
+                            <div class="amount">+৳1,500</div>
+                            <div class="status">Completed</div>
+                        </div>
+                    </div>
+                    <div class="earning-item">
+                        <div class="earning-info">
+                            <h4>AC Repair</h4>
+                            <p>Jan 12, 2024</p>
+                        </div>
+                        <div class="earning-amount">
+                            <div class="amount">+৳2,000</div>
+                            <div class="status">Completed</div>
+                        </div>
+                    </div>
+                    <div class="earning-item">
+                        <div class="earning-info">
+                            <h4>Pipe Installation</h4>
+                            <p>Jan 11, 2024</p>
+                        </div>
+                        <div class="earning-amount">
+                            <div class="amount">+৳900</div>
+                            <div class="status">Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="withdrawal-section">
+            <button class="btn-primary" onclick="withdrawEarnings()">
+                💳 Withdraw Earnings
+            </button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToDashboard()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-text">Home</div>
+        </div>
+        <div class="nav-item" onclick="showJobRequests()">
+            <div class="nav-icon">📋</div>
+            <div class="nav-text">Requests</div>
+        </div>
+        <div class="nav-item" onclick="showProviderJobs()">
+            <div class="nav-icon">✅</div>
+            <div class="nav-text">Jobs</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">💰</div>
+            <div class="nav-text">Earnings</div>
+        </div>
+    </div>
+
+    <script>
+        function withdrawEarnings() {
+            const availableAmount = 8200; // From the stats
+            if (availableAmount > 0) {
+                if (confirm(`Withdraw ৳${availableAmount} to your bank account?`)) {
+                    showToast('Withdrawal request submitted! Funds will be transferred within 24 hours.', 'success');
+                    
+                    // Simulate withdrawal processing
+                    setTimeout(() => {
+                        // Update available amount (in real app, this would be server-side)
+                        const availableStat = document.querySelector('.stat-orange');
+                        availableStat.textContent = '৳0';
+                        
+                        // Update total earnings (in real app, this would be server-side)
+                        const totalEarnings = document.querySelector('.earnings-amount');
+                        totalEarnings.textContent = '৳37,000';
+                    }, 2000);
+                }
+            } else {
+                showToast('No available funds to withdraw', 'info');
+            }
+        }
+
+        function goToDashboard() {
+            window.location.href = 'provider-dashboard.html';
+        }
+
+        function showJobRequests() {
+            window.location.href = 'job-requests.html';
+        }
+
+        function showProviderJobs() {
+            window.location.href = 'provider-jobs.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

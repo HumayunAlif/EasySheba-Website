@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Edit Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .profile-section {
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 2rem;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .camera-button {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 40px;
+            height: 40px;
+            background: #1D4ED8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .profile-note {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+        }
+
+        .form-section {
+            padding: 0 1rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .map-button {
+            width: 100%;
+            background: #dbeafe;
+            color: #1D4ED8;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .map-button:hover {
+            background: #bfdbfe;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #374151;
+            border: 2px solid #E5E7EB;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-section {
+            margin-top: 1.5rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.error { background: #EF4444; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Edit Profile</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="profile-section">
+            <div class="avatar-container">
+                <div class="profile-avatar" id="edit-profile-avatar">
+                    <img id="edit-profile-image" class="profile-image" src="" alt="Profile">
+                </div>
+                <button class="camera-button" onclick="changeProfilePicture()">📷</button>
+            </div>
+            <p class="profile-note">Tap camera icon to change photo</p>
+        </div>
+
+        <div class="form-section">
+            <form onsubmit="handleProfileUpdate(event)">
+                <div class="app-card">
+                    <h3 class="card-title">Personal Information</h3>
+                    
+                    <div class="form-group">
+                        <input type="text" name="firstName" id="edit-firstName" class="form-input" placeholder="First Name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" name="lastName" id="edit-lastName" class="form-input" placeholder="Last Name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" name="email" id="edit-email" class="form-input" placeholder="Email Address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="tel" name="phone" id="edit-phone" class="form-input" placeholder="Phone Number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" id="edit-address" class="form-input" rows="3" placeholder="Enter your address..."></textarea>
+                        <button type="button" class="map-button" onclick="openMapSelector()">
+                            📍 Select on Map
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="dateOfBirth" id="edit-dateOfBirth" class="form-input">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        💾 Save Changes
+                    </button>
+                    
+                    <button type="button" class="btn-secondary" onclick="goBack()">
+                        ❌ Cancel
+                    </button>
+                </div>
+            </form>
+
+            <div class="app-card password-section">
+                <h3 class="card-title">Change Password</h3>
+                <form onsubmit="handlePasswordChange(event)">
+                    <div class="form-group">
+                        <input type="password" name="currentPassword" class="form-input" placeholder="Current Password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" name="newPassword" class="form-input" placeholder="New Password (min 6 chars)" required>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" name="confirmPassword" class="form-input" placeholder="Confirm New Password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        🔒 Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('edit-firstName').value = currentUser.firstName || '';
+                document.getElementById('edit-lastName').value = currentUser.lastName || '';
+                document.getElementById('edit-email').value = currentUser.email || '';
+                document.getElementById('edit-phone').value = currentUser.phone || '';
+                document.getElementById('edit-address').value = currentUser.address || '';
+                document.getElementById('edit-dateOfBirth').value = currentUser.dateOfBirth || '';
+                
+                const profileAvatar = document.getElementById('edit-profile-avatar');
+                const profileImage = document.getElementById('edit-profile-image');
+                
+                if (currentUser.profilePicture) {
+                    if (currentUser.profilePicture.startsWith('data:') || currentUser.profilePicture.startsWith('http')) {
+                        profileImage.src = currentUser.profilePicture;
+                        profileImage.style.display = 'block';
+                        profileAvatar.textContent = '';
+                    } else {
+                        profileAvatar.textContent = currentUser.profilePicture;
+                        profileImage.style.display = 'none';
+                    }
+                } else {
+                    const initials = currentUser.firstName.charAt(0) + (currentUser.lastName.charAt(0) || '');
+                    profileAvatar.textContent = initials;
+                    profileImage.style.display = 'none';
+                }
+            }
+        }
+
+        function handleProfileUpdate(event) {
+            event.preventDefault();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+            
+            const formData = new FormData(event.target);
+            
+            // Update current user data
+            currentUser.firstName = formData.get('firstName');
+            currentUser.lastName = formData.get('lastName');
+            currentUser.email = formData.get('email');
+            currentUser.phone = formData.get('phone');
+            currentUser.address = formData.get('address');
+            currentUser.dateOfBirth = formData.get('dateOfBirth');
+            
+            // Update user in users array
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = { ...currentUser };
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showToast('Profile updated successfully! ✅', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'customer-profile.html';
+            }, 1000);
+        }
+
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+            
+            const formData = new FormData(event.target);
+            const currentPassword = formData.get('currentPassword');
+            const newPassword = formData.get('newPassword');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            if (currentPassword !== currentUser.password) {
+                showToast('Current password is incorrect', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('New password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
+            
+            currentUser.password = newPassword;
+            
+            // Update user in users array
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].password = newPassword;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showToast('Password updated successfully! 🔒', 'success');
+            event.target.reset();
+        }
+
+        function changeProfilePicture() {
+            window.location.href = 'profile-picture-selector.html';
+        }
+
+        function openMapSelector() {
+            showToast('Map selector coming soon!', 'info');
+        }
+
+        function goBack() {
+            window.location.href = 'customer-profile.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

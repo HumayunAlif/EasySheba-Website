@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - My Bookings</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .bookings-list {
+            padding: 0 1rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 8px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .booking-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .service-icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+        }
+
+        .service-details h4 {
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .service-details p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-accepted { background: #DBEAFE; color: #1E40AF; }
+        .status-completed { background: #D1FAE5; color: #065F46; }
+        .status-cancelled { background: #FEE2E2; color: #991B1B; }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .detail-icon {
+            margin-right: 6px;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #374151;
+            border: 1px solid #E5E7EB;
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .no-bookings-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-bookings-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-bookings-text {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 8px 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-text {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goToDashboard()">←</div>
+        <h1 class="header-title">My Bookings</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div id="bookings-list" class="bookings-list">
+            <!-- Bookings will be loaded here -->
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToDashboard()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-text">Home</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">📋</div>
+            <div class="nav-text">Bookings</div>
+        </div>
+        <div class="nav-item" onclick="showNotifications()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-text">Alerts</div>
+        </div>
+        <div class="nav-item" onclick="showProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-text">Profile</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookings();
+        });
+
+        function loadBookings() {
+            const bookingsList = document.getElementById('bookings-list');
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Filter bookings for current user
+            const userBookings = bookings.filter(booking => booking.customerId === currentUser.id);
+
+            if (userBookings.length === 0) {
+                bookingsList.innerHTML = `
+                    <div class="no-bookings">
+                        <div class="no-bookings-icon">📋</div>
+                        <h3 class="no-bookings-title">No Bookings Yet</h3>
+                        <p class="no-bookings-text">Start by booking your first service</p>
+                        <button class="action-button btn-primary" onclick="goToDashboard()">Browse Services</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            userBookings.forEach(booking => {
+                const statusClass = `status-${booking.status}`;
+                html += `
+                    <div class="booking-card" onclick="viewBookingDetails('${booking.id}')">
+                        <div class="booking-header">
+                            <div class="service-info">
+                                <div class="service-icon">${booking.serviceIcon}</div>
+                                <div class="service-details">
+                                    <h4>${booking.serviceName}</h4>
+                                    <p>Booking ID: ${booking.id}</p>
+                                </div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${booking.status}</span>
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📅</span>
+                                <span>${booking.date}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">⏰</span>
+                                <span>${booking.time}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">👤</span>
+                                <span>${booking.providerName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">💰</span>
+                                <span>৳${booking.estimatedCost}/hour</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-actions">
+                            <button class="action-button btn-primary" onclick="event.stopPropagation(); trackBooking('${booking.id}')">
+                                Track Order
+                            </button>
+                            <button class="action-button btn-secondary" onclick="event.stopPropagation(); contactProvider('${booking.providerName}')">
+                                Contact
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            bookingsList.innerHTML = html;
+        }
+
+        function viewBookingDetails(bookingId) {
+            localStorage.setItem('selectedBookingId', bookingId);
+            window.location.href = 'order-tracking.html';
+        }
+
+        function trackBooking(bookingId) {
+            localStorage.setItem('selectedBookingId', bookingId);
+            window.location.href = 'order-tracking.html';
+        }
+
+        function contactProvider(providerName) {
+            alert(`Contacting ${providerName}...`);
+        }
+
+        function goToDashboard() {
+            window.location.href = 'customer-dashboard.html';
+        }
+
+        function showNotifications() {
+            alert('Notifications feature coming soon!');
+        }
+
+        function showProfile() {
+            window.location.href = 'customer-profile.html';
+        }
+    </script>
+</body>
+</html>

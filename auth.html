@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Welcome</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-section {
+            text-align: center;
+            padding: 3rem 1rem 1rem;
+        }
+
+        .logo-circle {
+            width: 6rem;
+            height: 6rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            margin: 0 auto 2rem;
+        }
+
+        .logo-text {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .button-section {
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #374151;
+            border: 2px solid #E5E7EB;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google {
+            background: white;
+            color: #1f2937;
+            border: 2px solid #E5E7EB;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+            background: #1D4ED8;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="header-section">
+            <div class="logo-circle">
+                <div class="logo-text">ES</div>
+            </div>
+            <h2>Welcome to EasySheba</h2>
+            <p class="subtitle">Choose how you'd like to continue</p>
+        </div>
+
+        <div class="button-section">
+            <button class="btn-primary" onclick="showLoginForm()">
+                📧 Continue with Email
+            </button>
+            <button class="btn-secondary" onclick="showToast('Phone login coming soon!', 'info')">
+                📱 Continue with Phone
+            </button>
+            <button class="btn-google" onclick="showToast('Google login coming soon!', 'info')">
+                🔍 Continue with Google
+            </button>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                By continuing, you agree to our Terms of Service and Privacy Policy
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function showLoginForm() {
+            window.location.href = 'login.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = type === 'info' ? '#1D4ED8' : type === 'error' ? '#EF4444' : '#22C55E';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

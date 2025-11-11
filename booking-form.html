@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Book Service</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            padding: 0 1rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .provider-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-right: 16px;
+        }
+
+        .service-details h3 {
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .service-details p {
+            color: #4b5563;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .map-button {
+            width: 100%;
+            background: #dbeafe;
+            color: #1D4ED8;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .map-button:hover {
+            background: #bfdbfe;
+        }
+
+        .cost-estimate {
+            background: #dbeafe;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .cost-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .cost-amount {
+            font-weight: 700;
+            color: #1D4ED8;
+            font-size: 1.125rem;
+        }
+
+        .cost-note {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.error { background: #EF4444; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Book Service</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="form-container">
+            <form onsubmit="handleBooking(event)">
+                <div class="app-card">
+                    <div id="booking-service-info">
+                        <!-- Service info will be loaded here -->
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Date</label>
+                        <input type="date" name="date" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Time</label>
+                        <select name="time" class="form-input" required>
+                            <option value="">Select time</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Address</label>
+                        <textarea name="address" class="form-input" rows="3" placeholder="Enter your complete address..." required></textarea>
+                        <button type="button" class="map-button" onclick="openMapSelector()">
+                            📍 Select on Map
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Description</label>
+                        <textarea name="description" class="form-input" rows="4" placeholder="Describe your service requirements..." required></textarea>
+                    </div>
+
+                    <div class="cost-estimate">
+                        <div class="cost-header">
+                            <span class="cost-label">Estimated Cost:</span>
+                            <span id="estimated-cost" class="cost-amount">৳500/hour</span>
+                        </div>
+                        <p class="cost-note">* Final price may vary based on actual work</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        📤 Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const providers = {
+            electrical: [
+                { id: "E01", firstName: "Ashraf", lastName: "Khan", email: "ak.electric@example.com", phone: "0171-1234-567", area: "Dhanmondi", city: "Dhaka", experience: "10 years", rating: 4.8, specialty: "Electrical Wiring", price: 800 }
+            ],
+            plumbing: [
+                { id: "P01", firstName: "Farhad", lastName: "Hossain", email: "farhad.plumb@example.com", phone: "0183-5555-111", area: "Mirpur", city: "Dhaka", experience: "15 years", rating: 4.7, specialty: "Pipe Installation", price: 750 }
+            ],
+            cleaning: [
+                { id: "C01", firstName: "Rashida", lastName: "Begum", email: "rashida.clean@example.com", phone: "0171-5555-123", area: "Gulshan", city: "Dhaka", experience: "8 years", rating: 4.8, specialty: "Deep House Cleaning", price: 500 }
+            ],
+            'ac-repair': [
+                { id: "A01", firstName: "Mahbub", lastName: "Alam", email: "mahbub.ac@example.com", phone: "0177-8888-999", area: "Uttara", city: "Dhaka", experience: "8 years", rating: 4.5, specialty: "AC Installation", price: 1500 }
+            ],
+            beauty: [
+                { id: "B01", firstName: "Ruma", lastName: "Sultana", email: "ruma.beauty@example.com", phone: "0171-9999-147", area: "Gulshan", city: "Dhaka", experience: "10 years", rating: 4.9, specialty: "Bridal Makeup", price: 1200 }
+            ],
+            carpentry: [
+                { id: "C01", firstName: "Abdur", lastName: "Rahman", email: "abdur.carpentry@example.com", phone: "0171-4444-555", area: "Mohammadpur", city: "Dhaka", experience: "18 years", rating: 4.8, specialty: "Custom Furniture", price: 900 }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.querySelector('input[type="date"]').min = tomorrow.toISOString().split('T')[0];
+            
+            loadServiceInfo();
+        });
+
+        function loadServiceInfo() {
+            const providerId = localStorage.getItem('selectedProviderId');
+            const category = localStorage.getItem('selectedCategory');
+            const serviceInfo = document.getElementById('booking-service-info');
+            const estimatedCost = document.getElementById('estimated-cost');
+
+            if (providerId && category) {
+                const categoryProviders = providers[category] || [];
+                const provider = categoryProviders.find(p => p.id === providerId);
+                
+                if (provider) {
+                    const initials = provider.firstName.charAt(0) + provider.lastName.charAt(0);
+                    serviceInfo.innerHTML = `
+                        <div class="service-info">
+                            <div class="provider-avatar">
+                                <span>${initials}</span>
+                            </div>
+                            <div class="service-details">
+                                <h3>${provider.firstName} ${provider.lastName}</h3>
+                                <p>${provider.specialty} • ৳${provider.price}/hour</p>
+                                <p>📍 ${provider.area}, ${provider.city}</p>
+                            </div>
+                        </div>
+                    `;
+                    estimatedCost.textContent = `৳${provider.price}/hour`;
+                }
+            }
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                showToast('Please login to book a service', 'error');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const formData = new FormData(event.target);
+            const providerId = localStorage.getItem('selectedProviderId');
+            const category = localStorage.getItem('selectedCategory');
+            
+            const categoryProviders = providers[category] || [];
+            const provider = categoryProviders.find(p => p.id === providerId);
+            
+            if (!provider) {
+                showToast('Provider not found', 'error');
+                return;
+            }
+
+            const booking = {
+                id: 'BK-' + Date.now(),
+                customerId: currentUser.id,
+                customerName: `${currentUser.firstName} ${currentUser.lastName}`,
+                providerId: provider.id,
+                providerName: `${provider.firstName} ${provider.lastName}`,
+                serviceName: provider.specialty,
+                serviceIcon: getServiceIcon(category),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                address: formData.get('address'),
+                description: formData.get('description'),
+                estimatedCost: provider.price,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            // Save booking to localStorage
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings.push(booking);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+            localStorage.setItem('lastBooking', JSON.stringify(booking));
+
+            showToast('Booking confirmed!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'booking-confirmation.html';
+            }, 1000);
+        }
+
+        function getServiceIcon(category) {
+            const icons = {
+                'electrical': '⚡',
+                'plumbing': '🔧',
+                'cleaning': '🧹',
+                'ac-repair': '❄️',
+                'beauty': '💄',
+                'carpentry': '🪚'
+            };
+            return icons[category] || '🛠️';
+        }
+
+        function openMapSelector() {
+            window.location.href = 'map-selector.html';
+        }
+
+        function goBack() {
+            window.location.href = 'service-details.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Track Order</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .tracking-section {
+            padding: 0 1rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-icon {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-name {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .booking-id {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .provider-info {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .provider-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-right: 16px;
+        }
+
+        .provider-details h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .provider-details p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .timeline-section {
+            margin-top: 1.5rem;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            margin-top: 4px;
+        }
+
+        .dot-completed {
+            background: #22C55E;
+        }
+
+        .dot-current {
+            background: #3B82F6;
+            border: 3px solid #BFDBFE;
+        }
+
+        .dot-upcoming {
+            background: #D1D5DB;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-status {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-time {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .eta-badge {
+            display: inline-block;
+            background: #3B82F6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Track Order</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="tracking-section">
+            <div class="app-card">
+                <div class="service-header">
+                    <div class="service-icon">🔧</div>
+                    <h3 class="service-name">Plumbing Service</h3>
+                    <p class="booking-id">Booking ID: #BK001</p>
+                </div>
+
+                <div class="provider-info">
+                    <div class="provider-avatar">
+                        <span>JD</span>
+                    </div>
+                    <div class="provider-details">
+                        <h4>John Doe</h4>
+                        <p>⭐ 4.8 (127 reviews)</p>
+                        <p>📞 +880-1711-123456</p>
+                    </div>
+                </div>
+
+                <div class="timeline-section">
+                    <h4 class="timeline-title">Order Status</h4>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot dot-completed"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-status">Booking Confirmed</div>
+                                <div class="timeline-time">Today, 10:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot dot-completed"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-status">Provider Assigned</div>
+                                <div class="timeline-time">Today, 10:45 AM</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot dot-current"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-status">Provider on the Way</div>
+                                <div class="timeline-time">ETA: 15 minutes</div>
+                                <div class="eta-badge">Live Tracking</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot dot-upcoming"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-status">Service Started</div>
+                                <div class="timeline-time">Upcoming</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot dot-upcoming"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-status">Service Completed</div>
+                                <div class="timeline-time">Upcoming</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'customer-bookings.html';
+        }
+    </script>
+</body>
+</html>

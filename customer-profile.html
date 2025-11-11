@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Profile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: white;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 2rem;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .camera-button {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1D4ED8;
+            border: 2px solid white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .edit-profile-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .menu-section {
+            padding: 0 1rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: #f8fafc;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-icon {
+            font-size: 1.25rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-text {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .menu-arrow {
+            color: #9ca3af;
+        }
+
+        .logout-item {
+            color: #dc2626;
+        }
+
+        .logout-item .menu-text {
+            color: #dc2626;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 8px 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-text {
+            font-size: 0.75rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.info { background: #1D4ED8; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goToDashboard()">←</div>
+        <h1 class="header-title">Profile</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="profile-header">
+            <div class="avatar-container">
+                <div class="profile-avatar" id="profile-avatar">
+                    <img id="profile-image" class="profile-image" src="" alt="Profile">
+                </div>
+                <button class="camera-button" onclick="changeProfilePicture()">📷</button>
+            </div>
+            <h2 class="profile-name" id="profile-name">User Name</h2>
+            <p class="profile-email" id="profile-email">user@example.com</p>
+            <button class="edit-profile-btn" onclick="showEditProfile()">✏️ Edit Profile</button>
+        </div>
+
+        <div class="menu-section">
+            <div class="app-card">
+                <div class="menu-list">
+                    <div class="menu-item" onclick="showEditProfile()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon">✏️</div>
+                            <div class="menu-text">Edit Profile</div>
+                        </div>
+                        <div class="menu-arrow">→</div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="showBookings()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon">📋</div>
+                            <div class="menu-text">My Bookings</div>
+                        </div>
+                        <div class="menu-arrow">→</div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="showSavedAddresses()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon">📍</div>
+                            <div class="menu-text">Saved Addresses</div>
+                        </div>
+                        <div class="menu-arrow">→</div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="showSettings()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon">⚙️</div>
+                            <div class="menu-text">Settings</div>
+                        </div>
+                        <div class="menu-arrow">→</div>
+                    </div>
+                    
+                    <div class="menu-item logout-item" onclick="logout()">
+                        <div class="menu-item-left">
+                            <div class="menu-icon">🚪</div>
+                            <div class="menu-text">Logout</div>
+                        </div>
+                        <div class="menu-arrow">→</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goToDashboard()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-text">Home</div>
+        </div>
+        <div class="nav-item" onclick="showBookings()">
+            <div class="nav-icon">📋</div>
+            <div class="nav-text">Bookings</div>
+        </div>
+        <div class="nav-item" onclick="showNotifications()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-text">Alerts</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">👤</div>
+            <div class="nav-text">Profile</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                const initials = currentUser.firstName.charAt(0) + (currentUser.lastName.charAt(0) || '');
+                const fullName = `${currentUser.firstName} ${currentUser.lastName}`;
+                
+                document.getElementById('profile-name').textContent = fullName;
+                document.getElementById('profile-email').textContent = currentUser.email;
+                
+                const profileAvatar = document.getElementById('profile-avatar');
+                const profileImage = document.getElementById('profile-image');
+                
+                if (currentUser.profilePicture) {
+                    if (currentUser.profilePicture.startsWith('data:') || currentUser.profilePicture.startsWith('http')) {
+                        profileImage.src = currentUser.profilePicture;
+                        profileImage.style.display = 'block';
+                        profileAvatar.textContent = '';
+                    } else {
+                        profileAvatar.textContent = currentUser.profilePicture;
+                        profileImage.style.display = 'none';
+                    }
+                } else {
+                    profileAvatar.textContent = initials;
+                    profileImage.style.display = 'none';
+                }
+            }
+        }
+
+        function changeProfilePicture() {
+            window.location.href = 'profile-picture-selector.html';
+        }
+
+        function showEditProfile() {
+            window.location.href = 'edit-profile.html';
+        }
+
+        function showBookings() {
+            window.location.href = 'customer-bookings.html';
+        }
+
+        function showSavedAddresses() {
+            showToast('Saved addresses feature coming soon!', 'info');
+        }
+
+        function showSettings() {
+            showToast('Settings feature coming soon!', 'info');
+        }
+
+        function showNotifications() {
+            showToast('Notifications feature coming soon!', 'info');
+        }
+
+        function goToDashboard() {
+            window.location.href = 'customer-dashboard.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                showToast('Logged out successfully! 👋', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 1000);
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

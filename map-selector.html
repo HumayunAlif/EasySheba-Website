@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Select Location</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .search-section {
+            padding: 0 1rem 1rem;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-icon {
+            color: #9ca3af;
+            margin-right: 0.75rem;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+        }
+
+        .map-section {
+            padding: 0 1rem 1.5rem;
+        }
+
+        .map-container {
+            background: linear-gradient(135deg, #a7f3d0 0%, #93c5fd 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.2;
+        }
+
+        .grid-pattern {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .grid-item {
+            background: #60a5fa;
+            border-radius: 2px;
+        }
+
+        .grid-item:nth-child(odd) {
+            background: #34d399;
+        }
+
+        .map-content {
+            position: relative;
+            z-index: 10;
+            color: #1f2937;
+        }
+
+        .map-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        .map-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-subtitle {
+            font-size: 0.875rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .location-info {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.75rem;
+            color: #4b5563;
+        }
+
+        .quick-locations {
+            padding: 0 1rem 1.5rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .location-card {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .location-card:hover {
+            border-color: #1D4ED8;
+            transform: translateY(-2px);
+        }
+
+        .location-name {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 0.875rem;
+        }
+
+        .location-type {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .action-buttons {
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #374151;
+            border: 2px solid #E5E7EB;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.info { background: #1D4ED8; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Select Location</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" id="map-search" placeholder="Search for a location..." onkeyup="searchLocation(event)">
+            </div>
+        </div>
+
+        <div class="map-section">
+            <div class="map-container" onclick="selectOnMap()">
+                <div class="map-overlay">
+                    <div class="grid-pattern">
+                        <div class="grid-item"></div><div class="grid-item"></div><div class="grid-item"></div><div class="grid-item"></div>
+                        <div class="grid-item"></div><div class="grid-item"></div><div class="grid-item"></div><div class="grid-item"></div>
+                    </div>
+                </div>
+                <div class="map-content">
+                    <div class="map-icon">📍</div>
+                    <h3 class="map-title">Tap to Select Location</h3>
+                    <p class="map-subtitle" id="selected-location">Dhaka, Bangladesh</p>
+                    <div class="location-info">
+                        📍 Current: Gulshan, Dhaka<br>
+                        🎯 Accuracy: ±10 meters
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-locations">
+            <h3 class="section-title">Quick Locations</h3>
+            <div class="locations-grid">
+                <div class="location-card" onclick="selectQuickLocation('Gulshan 2, Dhaka')">
+                    <div class="location-name">🏢 Gulshan 2</div>
+                    <div class="location-type">Commercial Area</div>
+                </div>
+                <div class="location-card" onclick="selectQuickLocation('Dhanmondi 27, Dhaka')">
+                    <div class="location-name">🏠 Dhanmondi</div>
+                    <div class="location-type">Residential Area</div>
+                </div>
+                <div class="location-card" onclick="selectQuickLocation('Uttara Sector 7, Dhaka')">
+                    <div class="location-name">🏘️ Uttara</div>
+                    <div class="location-type">Modern Township</div>
+                </div>
+                <div class="location-card" onclick="selectQuickLocation('Mirpur 10, Dhaka')">
+                    <div class="location-name">🏙️ Mirpur</div>
+                    <div class="location-type">Urban Center</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-primary" onclick="confirmLocation()">
+                ✅ Confirm Location
+            </button>
+            <button class="btn-secondary" onclick="getCurrentLocation()">
+                📍 Use Current Location
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedLocation = 'Dhaka, Bangladesh';
+
+        function searchLocation(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    selectedLocation = query;
+                    document.getElementById('selected-location').textContent = query;
+                    showToast(`Location found: ${query}`, 'success');
+                }
+            }
+        }
+
+        function selectQuickLocation(location) {
+            selectedLocation = location;
+            document.getElementById('selected-location').textContent = location;
+            showToast(`Selected: ${location}`, 'success');
+        }
+
+        function selectOnMap() {
+            // Simulate map selection
+            const locations = [
+                'Gulshan 1, Dhaka',
+                'Banani, Dhaka', 
+                'Baridhara, Dhaka',
+                'Bashundhara R/A, Dhaka'
+            ];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            selectedLocation = randomLocation;
+            document.getElementById('selected-location').textContent = randomLocation;
+            showToast(`Location selected: ${randomLocation}`, 'success');
+        }
+
+        function getCurrentLocation() {
+            showToast('Getting your location...', 'info');
+            
+            // Simulate geolocation
+            setTimeout(() => {
+                if (Math.random() > 0.2) { // 80% success rate simulation
+                    selectedLocation = 'Gulshan, Dhaka (Current)';
+                    document.getElementById('selected-location').textContent = selectedLocation;
+                    showToast('Current location detected!', 'success');
+                } else {
+                    showToast('Location access denied. Using default location.', 'info');
+                    selectedLocation = 'Gulshan, Dhaka';
+                    document.getElementById('selected-location').textContent = selectedLocation;
+                }
+            }, 1500);
+        }
+
+        function confirmLocation() {
+            // Save to localStorage for use in other pages
+            localStorage.setItem('selectedLocation', selectedLocation);
+            showToast('Location added to address!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'booking-form.html';
+            }, 1000);
+        }
+
+        function goBack() {
+            window.location.href = 'booking-form.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Load saved location if exists
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLocation = localStorage.getItem('selectedLocation');
+            if (savedLocation) {
+                selectedLocation = savedLocation;
+                document.getElementById('selected-location').textContent = savedLocation;
+            }
+        });
+    </script>
+</body>
+</html>

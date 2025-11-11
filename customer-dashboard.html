@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Customer Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .app-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-right: 0.75rem;
+        }
+
+        .app-info h1 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .app-info p {
+            font-size: 0.75rem;
+            color: #4b5563;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification-icon {
+            font-size: 1.25rem;
+            color: #4b5563;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-section {
+            padding: 0 1rem 1rem;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-icon {
+            color: #9ca3af;
+            margin-right: 0.75rem;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 1rem;
+            color: white;
+            text-align: center;
+        }
+
+        .promo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .promo-text {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .promo-button {
+            background: white;
+            color: #ea580c;
+            padding: 8px 24px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .services-section {
+            padding: 0 1rem 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .service-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(29, 78, 216, 0.2);
+        }
+
+        .service-icon {
+            font-size: 2.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-price {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .bookings-section {
+            padding: 0 1rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .view-all {
+            color: #1D4ED8;
+            font-weight: 500;
+            font-size: 0.875rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 1rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 8px 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-text {
+            font-size: 0.75rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.error { background: #EF4444; }
+        .toast.info { background: #1D4ED8; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-left">
+            <div class="app-logo">ES</div>
+            <div class="app-info">
+                <h1>EasySheba</h1>
+                <p>📍 Dhaka, Bangladesh</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="notification-icon" onclick="showNotifications()">🔔</div>
+            <div class="user-avatar" id="user-initials" onclick="showProfile()">U</div>
+        </div>
+    </div>
+
+    <div class="screen-content">
+        <div class="welcome-section">
+            <h2 class="welcome-title">What service do you need? 🛠️</h2>
+            <p class="welcome-subtitle">Book trusted professionals in minutes</p>
+        </div>
+
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="Search for services...">
+            </div>
+        </div>
+
+        <div class="promo-banner">
+            <h3 class="promo-title">🎉 Special Offer!</h3>
+            <p class="promo-text">Get 20% off on your first booking</p>
+            <button class="promo-button">Claim Now</button>
+        </div>
+
+        <div class="services-section">
+            <h3 class="section-title">Popular Services</h3>
+            <div class="service-grid">
+                <div class="service-item" onclick="showServiceCategory('cleaning')">
+                    <div class="service-icon">🧹</div>
+                    <div class="service-name">Cleaning</div>
+                    <div class="service-price">From ৳500</div>
+                </div>
+                <div class="service-item" onclick="showServiceCategory('plumbing')">
+                    <div class="service-icon">🔧</div>
+                    <div class="service-name">Plumbing</div>
+                    <div class="service-price">From ৳750</div>
+                </div>
+                <div class="service-item" onclick="showServiceCategory('electrical')">
+                    <div class="service-icon">⚡</div>
+                    <div class="service-name">Electrical</div>
+                    <div class="service-price">From ৳800</div>
+                </div>
+                <div class="service-item" onclick="showServiceCategory('ac-repair')">
+                    <div class="service-icon">❄️</div>
+                    <div class="service-name">AC Repair</div>
+                    <div class="service-price">From ৳1000</div>
+                </div>
+                <div class="service-item" onclick="showServiceCategory('beauty')">
+                    <div class="service-icon">💄</div>
+                    <div class="service-name">Beauty</div>
+                    <div class="service-price">From ৳800</div>
+                </div>
+                <div class="service-item" onclick="showServiceCategory('carpentry')">
+                    <div class="service-icon">🪚</div>
+                    <div class="service-name">Carpentry</div>
+                    <div class="service-price">From ৳900</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bookings-section">
+            <div class="app-card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Bookings</h3>
+                    <button class="view-all" onclick="showAllBookings()">View All</button>
+                </div>
+                <div id="recent-bookings-list">
+                    <div class="no-bookings">No recent bookings. Book your first service!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showDashboard()">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-text">Home</div>
+        </div>
+        <div class="nav-item" onclick="showAllBookings()">
+            <div class="nav-icon">📋</div>
+            <div class="nav-text">Bookings</div>
+        </div>
+        <div class="nav-item" onclick="showNotifications()">
+            <div class="nav-icon">🔔</div>
+            <div class="nav-text">Alerts</div>
+        </div>
+        <div class="nav-item" onclick="showProfile()">
+            <div class="nav-icon">👤</div>
+            <div class="nav-text">Profile</div>
+        </div>
+    </div>
+
+    <script>
+        // Load user data
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                const initials = currentUser.firstName.charAt(0) + (currentUser.lastName.charAt(0) || '');
+                document.getElementById('user-initials').textContent = initials;
+            }
+        });
+
+        function showServiceCategory(category) {
+            localStorage.setItem('selectedCategory', category);
+            window.location.href = 'service-category.html';
+        }
+
+        function showAllBookings() {
+            window.location.href = 'customer-bookings.html';
+        }
+
+        function showNotifications() {
+            showToast('Notifications feature coming soon!', 'info');
+        }
+
+        function showProfile() {
+            window.location.href = 'customer-profile.html';
+        }
+
+        function showDashboard() {
+            // Already on dashboard
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

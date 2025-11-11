@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Sign In</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-container {
+            padding: 0 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .remember-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .remember-text {
+            color: #4b5563;
+        }
+
+        .forgot-password {
+            color: #1D4ED8;
+            font-weight: 500;
+            font-size: 0.875rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .signup-link {
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .signup-text {
+            color: #4b5563;
+        }
+
+        .signup-button {
+            color: #1D4ED8;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.error { background: #EF4444; }
+        .toast.info { background: #1D4ED8; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="header-title">Sign In</div>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="welcome-section">
+            <h2 class="welcome-title">Welcome Back! 👋</h2>
+            <p class="welcome-subtitle">Sign in to your account</p>
+        </div>
+
+        <div class="form-container">
+            <form onsubmit="handleLogin(event)">
+                <div class="app-card">
+                    <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+                    <input type="password" name="password" class="form-input" placeholder="Password" required>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" class="remember-checkbox">
+                            <span class="remember-text">Remember me</span>
+                        </label>
+                        <button type="button" class="forgot-password">
+                            Forgot Password?
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        Sign In
+                    </button>
+                    
+                    <div class="signup-link">
+                        <span class="signup-text">Don't have an account? </span>
+                        <button type="button" class="signup-button" onclick="showSignupForm()">
+                            Sign Up
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const users = [
+            { id: 1, firstName: "John", lastName: "Doe", email: "john@example.com", password: "123456", phone: "01711111111", userType: "customer" },
+            { id: 2, firstName: "Sarah", lastName: "Ahmed", email: "sarah@example.com", password: "123456", phone: "01722222222", userType: "provider" },
+            { id: 3, firstName: "Admin", lastName: "User", email: "admin@easysheba.com", password: "admin123", phone: "01700000000", userType: "admin" }
+        ];
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('userType', user.userType);
+                
+                showToast(`Welcome back, ${user.firstName}! 👋`, 'success');
+                
+                setTimeout(() => {
+                    if (user.userType === 'customer') {
+                        window.location.href = 'customer-dashboard.html';
+                    } else if (user.userType === 'provider') {
+                        window.location.href = 'provider-dashboard.html';
+                    } else {
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                }, 1000);
+            } else {
+                showToast('Invalid email or password', 'error');
+            }
+        }
+
+        function showSignupForm() {
+            window.location.href = 'signup.html';
+        }
+
+        function goBack() {
+            window.location.href = 'auth.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

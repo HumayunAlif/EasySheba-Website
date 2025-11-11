@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Sign Up</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-container {
+            padding: 0 1.5rem;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        .terms-section {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms-checkbox {
+            margin-top: 0.25rem;
+            margin-right: 0.75rem;
+        }
+
+        .terms-text {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .login-link {
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .login-text {
+            color: #4b5563;
+        }
+
+        .login-button {
+            color: #1D4ED8;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+        }
+
+        .toast.success { background: #22C55E; }
+        .toast.error { background: #EF4444; }
+        .toast.info { background: #1D4ED8; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="header-title">Sign Up</div>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="welcome-section">
+            <h2 class="welcome-title">Join EasySheba! 🚀</h2>
+            <p class="welcome-subtitle">Create your account</p>
+        </div>
+
+        <div class="form-container">
+            <form onsubmit="handleSignup(event)">
+                <div class="app-card">
+                    <h3 class="form-title">Personal Information</h3>
+                    
+                    <input type="text" name="fullName" class="form-input" placeholder="Full Name" required>
+                    <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+                    <input type="tel" name="phone" class="form-input" placeholder="Phone Number" required>
+                    <input type="password" name="password" class="form-input" placeholder="Password (min 6 chars)" required>
+                    
+                    <select name="userType" class="form-input" required>
+                        <option value="">Select user type</option>
+                        <option value="customer">🛒 Customer - Book Services</option>
+                        <option value="provider">🔧 Service Provider - Offer Services</option>
+                        <option value="admin">👑 Admin - Manage Platform</option>
+                    </select>
+                    
+                    <div class="terms-section">
+                        <input type="checkbox" id="terms" class="terms-checkbox" required>
+                        <label for="terms" class="terms-text">
+                            I agree to the Terms & Conditions and Privacy Policy
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        Create Account
+                    </button>
+                    
+                    <div class="login-link">
+                        <span class="login-text">Already have an account? </span>
+                        <button type="button" class="login-button" onclick="showLoginForm()">
+                            Sign In
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem('users')) || [
+            { id: 1, firstName: "John", lastName: "Doe", email: "john@example.com", password: "123456", phone: "01711111111", userType: "customer" },
+            { id: 2, firstName: "Sarah", lastName: "Ahmed", email: "sarah@example.com", password: "123456", phone: "01722222222", userType: "provider" },
+            { id: 3, firstName: "Admin", lastName: "User", email: "admin@easysheba.com", password: "admin123", phone: "01700000000", userType: "admin" }
+        ];
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const fullName = formData.get('fullName');
+            const email = formData.get('email');
+            const phone = formData.get('phone');
+            const password = formData.get('password');
+            const selectedUserType = formData.get('userType');
+            
+            if (users.find(u => u.email === email)) {
+                showToast('Email already exists', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            const nameParts = fullName.split(' ');
+            const newUser = {
+                id: users.length + 1,
+                firstName: nameParts[0],
+                lastName: nameParts.slice(1).join(' ') || '',
+                email,
+                phone,
+                password,
+                userType: selectedUserType
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            localStorage.setItem('userType', selectedUserType);
+            
+            showToast('Account created successfully! 🎉', 'success');
+            
+            setTimeout(() => {
+                if (selectedUserType === 'customer') {
+                    window.location.href = 'customer-dashboard.html';
+                } else if (selectedUserType === 'provider') {
+                    window.location.href = 'provider-dashboard.html';
+                } else {
+                    window.location.href = 'admin-dashboard.html';
+                }
+            }, 1500);
+        }
+
+        function showLoginForm() {
+            window.location.href = 'login.html';
+        }
+
+        function goBack() {
+            window.location.href = 'auth.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
