@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - My Profile</title>
+    <script src="data-storage.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+        }
+
+        .profile-header {
+            background: white;
+            border-radius: 0 0 30px 30px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 5px 0;
+        }
+
+        .profile-email {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0 0 20px 0;
+        }
+
+        .verification-badge {
+            display: inline-block;
+            background: #22C55E;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stats-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 20px;
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1D4ED8;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .menu-section {
+            background: white;
+            border-radius: 20px;
+            margin: 20px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: #f8fafc;
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #1D4ED8;
+            font-size: 1.25rem;
+        }
+
+        .menu-content {
+            flex: 1;
+        }
+
+        .menu-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+            font-size: 1rem;
+        }
+
+        .menu-description {
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .menu-arrow {
+            color: #9ca3af;
+            font-size: 1.25rem;
+        }
+
+        .edit-profile-btn {
+            display: block;
+            width: calc(100% - 40px);
+            margin: 30px auto;
+            padding: 16px;
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background: #1e40af;
+        }
+
+        .logout-btn {
+            display: block;
+            width: calc(100% - 40px);
+            margin: 20px auto;
+            padding: 16px;
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #fecaca;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+            background: #22C55E;
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">My Profile</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">
+                <!-- Avatar initials -->
+            </div>
+            <h2 class="profile-name" id="profile-name"></h2>
+            <p class="profile-email" id="profile-email"></p>
+            <span class="verification-badge">✓ Verified Customer</span>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-value" id="total-bookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="ongoing-bookings">0</div>
+                <div class="stat-label">Ongoing</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completed-bookings">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-item" onclick="viewMyBookings()">
+                <div class="menu-icon">📋</div>
+                <div class="menu-content">
+                    <h3 class="menu-title">My Bookings</h3>
+                    <p class="menu-description">View all your service bookings</p>
+                </div>
+                <div class="menu-arrow">→</div>
+            </div>
+
+            <div class="menu-item" onclick="viewPaymentHistory()">
+                <div class="menu-icon">💳</div>
+                <div class="menu-content">
+                    <h3 class="menu-title">Payment History</h3>
+                    <p class="menu-description">All your transactions and payments</p>
+                </div>
+                <div class="menu-arrow">→</div>
+            </div>
+
+            <div class="menu-item" onclick="openNotifications()">
+                <div class="menu-icon">🔔</div>
+                <div class="menu-content">
+                    <h3 class="menu-title">Notifications</h3>
+                    <p class="menu-description">Booking updates and messages</p>
+                </div>
+                <div class="menu-arrow">→</div>
+            </div>
+
+            <div class="menu-item" onclick="openHelpSupport()">
+                <div class="menu-icon">❓</div>
+                <div class="menu-content">
+                    <h3 class="menu-title">Help & Support</h3>
+                    <p class="menu-description">FAQs, contact support</p>
+                </div>
+                <div class="menu-arrow">→</div>
+            </div>
+
+            <div class="menu-item" onclick="openSettings()">
+                <div class="menu-icon">⚙️</div>
+                <div class="menu-content">
+                    <h3 class="menu-title">Settings</h3>
+                    <p class="menu-description">App preferences and privacy</p>
+                </div>
+                <div class="menu-arrow">→</div>
+            </div>
+        </div>
+
+        <button class="edit-profile-btn" onclick="openEditProfile()">
+            ✏️ Edit Profile
+        </button>
+
+        <button class="logout-btn" onclick="logout()">
+            🚪 Logout
+        </button>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Edit Profile</h3>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-input" id="edit-firstName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-input" id="edit-lastName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="edit-email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="edit-phone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-input" id="edit-address" rows="3"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeEditProfile()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            loadBookingStats();
+        });
+
+        function loadUserProfile() {
+            currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Display user info
+            const initials = (currentUser.firstName.charAt(0) + (currentUser.lastName.charAt(0) || '')).toUpperCase();
+            document.getElementById('profile-avatar').textContent = initials;
+            document.getElementById('profile-name').textContent = 
+                `${currentUser.firstName} ${currentUser.lastName}`;
+            document.getElementById('profile-email').textContent = currentUser.email;
+        }
+
+        function loadBookingStats() {
+            if (!currentUser) return;
+            
+            const bookings = easysheba.getBookings();
+            const userBookings = bookings.filter(b => b.customerId === currentUser.id);
+            
+            const total = userBookings.length;
+            const ongoing = userBookings.filter(b => b.status === 'confirmed' || b.status === 'assigned').length;
+            const completed = userBookings.filter(b => b.status === 'completed').length;
+            
+            document.getElementById('total-bookings').textContent = total;
+            document.getElementById('ongoing-bookings').textContent = ongoing;
+            document.getElementById('completed-bookings').textContent = completed;
+        }
+
+        function openEditProfile() {
+            if (!currentUser) return;
+            
+            // Fill form with current user data
+            document.getElementById('edit-firstName').value = currentUser.firstName;
+            document.getElementById('edit-lastName').value = currentUser.lastName;
+            document.getElementById('edit-email').value = currentUser.email;
+            document.getElementById('edit-phone').value = currentUser.phone || '';
+            document.getElementById('edit-address').value = currentUser.address || '';
+            
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function closeEditProfile() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        // Handle form submission
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const updatedData = {
+                firstName: document.getElementById('edit-firstName').value,
+                lastName: document.getElementById('edit-lastName').value,
+                email: document.getElementById('edit-email').value,
+                phone: document.getElementById('edit-phone').value,
+                address: document.getElementById('edit-address').value
+            };
+            
+            // Update user in storage
+            easysheba.updateUser(currentUser.id, updatedData);
+            
+            // Update localStorage
+            const updatedUser = { ...currentUser, ...updatedData };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            currentUser = updatedUser;
+            
+            // Refresh profile display
+            loadUserProfile();
+            closeEditProfile();
+            
+            showToast('Profile updated successfully!');
+        });
+
+        function viewMyBookings() {
+            window.location.href = 'customer-bookings.html';
+        }
+
+        function viewPaymentHistory() {
+            // Create or redirect to payment history page
+            alert('Payment History page will be available soon!');
+            // window.location.href = 'payment-history.html';
+        }
+
+        function openNotifications() {
+            // Create or redirect to notifications page
+            alert('Notifications page will be available soon!');
+            // window.location.href = 'notifications.html';
+        }
+
+        function openHelpSupport() {
+            // Create or redirect to help page
+            alert('Help & Support page will be available soon!');
+            // window.location.href = 'help-support.html';
+        }
+
+        function openSettings() {
+            // Create or redirect to settings page
+            alert('Settings page will be available soon!');
+            // window.location.href = 'settings.html';
+        }
+
+        function goBack() {
+            window.location.href = 'customer-dashboard.html';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editProfileModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditProfile();
+            }
+        });
+    </script>
+</body>
+</html>

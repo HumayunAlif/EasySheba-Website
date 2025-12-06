@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Dashboard</title>
+    <script src="data-storage.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1D4ED8;
+            --secondary: #22C55E;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .app-header {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: #f1f5f9;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark);
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: #f1f5f9;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 88px;
+            padding: 24px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(29, 78, 216, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 24px 16px 56px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-box input:focus {
+            outline: none;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.primary { border-color: var(--primary); }
+        .stat-card.success { border-color: var(--success); }
+        .stat-card.warning { border-color: var(--warning); }
+        .stat-card.danger { border-color: var(--danger); }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-icon.primary { background: var(--primary); }
+        .stat-icon.success { background: var(--success); }
+        .stat-icon.warning { background: var(--warning); }
+        .stat-icon.danger { background: var(--danger); }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .stat-info p {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Services Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .view-all {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(29, 78, 216, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .view-all:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: var(--primary);
+        }
+
+        .service-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .service-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .service-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #9ca3af;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .service-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .service-btn:hover {
+            background: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Recent Bookings */
+        .bookings-section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .booking-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.3s ease;
+        }
+
+        .booking-item:hover {
+            background: #f9fafb;
+        }
+
+        .booking-item:last-child {
+            border-bottom: none;
+        }
+
+        .booking-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        .booking-details {
+            flex: 1;
+        }
+
+        .booking-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .booking-details p {
+            color: #6b7280;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .booking-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-confirmed { background: #dbeafe; color: #1e40af; }
+        .status-completed { background: #dcfce7; color: #166534; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(29, 78, 216, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--primary); }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-header {
+                padding: 12px 16px;
+            }
+            
+            .user-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-icon">🛠️</div>
+            <div class="logo-text">EasySheba</div>
+        </div>
+        
+        <div class="user-menu">
+            <div class="notification-btn" onclick="showNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-count">0</span>
+            </div>
+            
+            <div class="user-profile" onclick="goToProfile()">
+                <div class="user-avatar" id="user-avatar">JD</div>
+                <div class="user-info">
+                    <h4 id="user-name">John Doe</h4>
+                    <p id="user-type">Customer</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h1 class="welcome-title" id="welcome-message">Good Morning!</h1>
+                <p class="welcome-subtitle">What service do you need today?</p>
+                
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search for services (electrician, plumber, cleaner...)" 
+                           onkeyup="searchServices(event)">
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card primary" onclick="viewBookings()">
+                <div class="stat-icon primary">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-bookings">0</h3>
+                    <p>Total Bookings</p>
+                </div>
+            </div>
+            
+            <div class="stat-card success" onclick="viewActiveBookings()">
+                <div class="stat-icon success">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="active-bookings">0</h3>
+                    <p>Active Services</p>
+                </div>
+            </div>
+            
+            <div class="stat-card warning" onclick="viewSpending()">
+                <div class="stat-icon warning">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-spent">৳0</h3>
+                    <p>Total Spent</p>
+                </div>
+            </div>
+            
+            <div class="stat-card danger" onclick="viewCancellations()">
+                <div class="stat-icon danger">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="cancelled-bookings">0</h3>
+                    <p>Cancelled</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-th-large"></i>
+                Popular Services
+            </h2>
+            <a href="service-category.html?filter=all" class="view-all">
+                View All <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="services-grid" id="services-grid">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <section class="bookings-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Recent Bookings
+                </h2>
+                <a href="customer-bookings.html" class="view-all">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div id="recent-bookings">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="customer-dashboard.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="customer-bookings.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Bookings</span>
+        </a>
+        <a href="service-category.html?filter=all" class="nav-item">
+            <i class="fas fa-search"></i>
+            <span>Services</span>
+        </a>
+        <a href="customer-profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Customer Dashboard Loading...');
+            
+            // Check authentication
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(userData);
+                console.log('Current User:', currentUser);
+                
+                if (currentUser.userType !== 'customer') {
+                    window.location.href = currentUser.userType === 'admin' ? 
+                        'admin-dashboard.html' : 'provider-jobs.html';
+                    return;
+                }
+                
+                // Initialize dashboard
+                initializeDashboard();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('System error occurred', 'error');
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 2000);
+            }
+        });
+
+        function initializeDashboard() {
+            console.log('Initializing dashboard...');
+            
+            // Set user info
+            document.getElementById('user-name').textContent = 
+                `${currentUser.firstName} ${currentUser.lastName}`;
+            document.getElementById('user-avatar').textContent = 
+                (currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)).toUpperCase();
+            document.getElementById('user-type').textContent = 
+                currentUser.userType === 'admin' ? 'Admin' : 
+                currentUser.userType === 'provider' ? 'Service Provider' : 'Customer';
+            
+            // Set welcome message based on time
+            setWelcomeMessage();
+            
+            // Check if easysheba is loaded
+            if (typeof easysheba === 'undefined') {
+                console.error('easysheba object not loaded');
+                showToast('System data not loaded. Please refresh.', 'error');
+                return;
+            }
+            
+            // Initialize data storage
+            easysheba.init();
+            
+            // Load all data
+            loadAllData();
+        }
+
+        function setWelcomeMessage() {
+            const hour = new Date().getHours();
+            let message = 'Good ';
+            
+            if (hour < 12) message += 'Morning';
+            else if (hour < 17) message += 'Afternoon';
+            else message += 'Evening';
+            
+            message += `, ${currentUser.firstName}!`;
+            document.getElementById('welcome-message').textContent = message;
+        }
+
+        function loadAllData() {
+            console.log('Loading all dashboard data...');
+            
+            // Load stats
+            loadDashboardStats();
+            
+            // Load services
+            setTimeout(() => {
+                loadPopularServices();
+            }, 300);
+            
+            // Load recent bookings
+            setTimeout(() => {
+                loadRecentBookings();
+            }, 500);
+            
+            // Load notifications count
+            setTimeout(() => {
+                loadNotificationCount();
+            }, 700);
+        }
+
+        function loadDashboardStats() {
+            try {
+                console.log('Loading dashboard stats...');
+                
+                // Get all bookings
+                const allBookings = easysheba.getBookings();
+                console.log('Total bookings in system:', allBookings.length);
+                
+                // Filter bookings for current customer
+                const customerBookings = allBookings.filter(b => {
+                    if (!b) return false;
+                    
+                    // Multiple ways to match customer ID
+                    const customerId = b.customerId;
+                    const currentUserId = currentUser.id;
+                    
+                    return customerId === currentUserId ||
+                           customerId === parseInt(currentUserId) ||
+                           customerId?.toString() === currentUserId?.toString();
+                });
+                
+                console.log('Customer bookings found:', customerBookings.length);
+                
+                const totalBookings = customerBookings.length;
+                const activeBookings = customerBookings.filter(b => 
+                    b.status === 'confirmed' || b.status === 'assigned' || b.status === 'pending'
+                ).length;
+                
+                const completedBookings = customerBookings.filter(b => b.status === 'completed');
+                const totalSpent = completedBookings.reduce((sum, b) => {
+                    const amount = parseFloat(b.totalAmount) || 0;
+                    return sum + amount;
+                }, 0);
+                
+                const cancelledBookings = customerBookings.filter(b => b.status === 'cancelled').length;
+                
+                document.getElementById('total-bookings').textContent = totalBookings;
+                document.getElementById('active-bookings').textContent = activeBookings;
+                document.getElementById('total-spent').textContent = `৳${totalSpent.toFixed(0)}`;
+                document.getElementById('cancelled-bookings').textContent = cancelledBookings;
+                
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        function loadPopularServices() {
+            console.log('Loading popular services...');
+            
+            try {
+                // Get services from data storage
+                const services = easysheba.getServices();
+                console.log('Services from easysheba:', services);
+                
+                // If no services returned, check localStorage directly
+                if (!services || services.length === 0) {
+                    console.log('No services from easysheba, checking localStorage...');
+                    const storedServices = localStorage.getItem('services');
+                    if (storedServices) {
+                        try {
+                            const parsedServices = JSON.parse(storedServices);
+                            console.log('Services from localStorage:', parsedServices);
+                            displayServices(parsedServices);
+                            return;
+                        } catch (e) {
+                            console.error('Error parsing localStorage services:', e);
+                        }
+                    }
+                } else {
+                    displayServices(services);
+                }
+                
+            } catch (error) {
+                console.error('Error loading services:', error);
+                displayDefaultServices();
+            }
+        }
+
+        function displayServices(services) {
+            console.log('Displaying services:', services);
+            
+            const container = document.getElementById('services-grid');
+            
+            if (!services || services.length === 0) {
+                console.log('No services to display');
+                displayDefaultServices();
+                return;
+            }
+            
+            // Filter active services
+            const activeServices = services.filter(s => s.status !== 'inactive');
+            console.log('Active services:', activeServices.length);
+            
+            if (activeServices.length === 0) {
+                displayDefaultServices();
+                return;
+            }
+            
+            let html = '';
+            
+            // Show up to 6 services
+            const servicesToShow = activeServices.slice(0, 6);
+            
+            servicesToShow.forEach(service => {
+                // Get providers for this category
+                const providers = getProvidersByCategory(service.category);
+                const providerCount = providers.length;
+                
+                html += `
+                    <div class="service-card" onclick="selectService('${service.category}')">
+                        <div class="service-icon">
+                            ${service.icon || '🛠️'}
+                        </div>
+                        <h3 class="service-name">${service.name || 'Service'}</h3>
+                        <p class="service-description">${service.description || 'Professional service'}</p>
+                        
+                        <div class="service-stats">
+                            <span><i class="fas fa-user-tie"></i> ${providerCount} Providers</span>
+                            <span><i class="fas fa-star"></i> 4.8+ Rating</span>
+                        </div>
+                        
+                        <button class="service-btn" onclick="event.stopPropagation(); selectService('${service.category}')">
+                            Book Now <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function getProvidersByCategory(category) {
+            try {
+                const providers = easysheba.getProviders();
+                if (!providers || !Array.isArray(providers)) return [];
+                
+                return providers.filter(provider => {
+                    // Check if provider matches category
+                    if (!provider || !provider.serviceCategory) return false;
+                    
+                    // Also check if provider is verified and active
+                    const isVerified = provider.isVerified !== false;
+                    const isActive = provider.isActive !== false;
+                    
+                    return provider.serviceCategory === category && isVerified && isActive;
+                });
+                
+            } catch (error) {
+                console.error('Error getting providers by category:', error);
+                return [];
+            }
+        }
+
+        function displayDefaultServices() {
+            console.log('Displaying default services');
+            
+            // Default services data
+            const defaultServices = [
+                {
+                    category: 'electrician',
+                    name: 'Electrical Services',
+                    icon: '⚡',
+                    description: 'All electrical repair and installation'
+                },
+                {
+                    category: 'plumber',
+                    name: 'Plumbing Services',
+                    icon: '🚿',
+                    description: 'Pipe repair, installation and maintenance'
+                },
+                {
+                    category: 'cleaner',
+                    name: 'Cleaning Services',
+                    icon: '🧹',
+                    description: 'Home and office cleaning'
+                },
+                {
+                    category: 'ac-repair',
+                    name: 'AC Repair Services',
+                    icon: '❄️',
+                    description: 'AC installation and repair'
+                },
+                {
+                    category: 'painter',
+                    name: 'Painting Services',
+                    icon: '🎨',
+                    description: 'Wall painting and decoration'
+                },
+                {
+                    category: 'carpenter',
+                    name: 'Carpentry Services',
+                    icon: '🪚',
+                    description: 'Furniture repair and making'
+                }
+            ];
+            
+            const container = document.getElementById('services-grid');
+            let html = '';
+            
+            defaultServices.forEach(service => {
+                // Get providers count for default services too
+                const providers = getProvidersByCategory(service.category);
+                const providerCount = providers.length;
+                
+                html += `
+                    <div class="service-card" onclick="selectService('${service.category}')">
+                        <div class="service-icon">
+                            ${service.icon}
+                        </div>
+                        <h3 class="service-name">${service.name}</h3>
+                        <p class="service-description">${service.description}</p>
+                        
+                        <div class="service-stats">
+                            <span><i class="fas fa-user-tie"></i> ${providerCount} Providers</span>
+                            <span><i class="fas fa-star"></i> 4.8+ Rating</span>
+                        </div>
+                        
+                        <button class="service-btn" onclick="event.stopPropagation(); selectService('${service.category}')">
+                            Book Now <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function loadRecentBookings() {
+            console.log('Loading recent bookings...');
+            
+            try {
+                const allBookings = easysheba.getBookings();
+                console.log('All bookings:', allBookings.length);
+                
+                // Filter bookings for current customer
+                const customerBookings = allBookings.filter(b => {
+                    if (!b) return false;
+                    
+                    const customerId = b.customerId;
+                    const currentUserId = currentUser.id;
+                    
+                    return customerId === currentUserId ||
+                           customerId === parseInt(currentUserId) ||
+                           customerId?.toString() === currentUserId?.toString();
+                });
+                
+                console.log('Customer bookings for recent:', customerBookings.length);
+                
+                // Sort by date (newest first)
+                const recentBookings = customerBookings
+                    .sort((a, b) => {
+                        const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
+                        const dateB = b.createdAt ? new Date(b.createdAt) : new Date();
+                        return dateB - dateA;
+                    })
+                    .slice(0, 3); // Get top 3
+                
+                displayRecentBookings(recentBookings);
+                
+            } catch (error) {
+                console.error('Error loading recent bookings:', error);
+                displayNoBookings();
+            }
+        }
+
+        function displayRecentBookings(bookings) {
+            const container = document.getElementById('recent-bookings');
+            
+            if (!bookings || bookings.length === 0) {
+                displayNoBookings();
+                return;
+            }
+            
+            let html = '';
+            
+            bookings.forEach(booking => {
+                // Get provider info
+                let provider = null;
+                if (booking.providerId) {
+                    provider = easysheba.getUserById(booking.providerId);
+                }
+                
+                // Get service info
+                let serviceName = 'Service';
+                let serviceIcon = '🛠️';
+                
+                if (provider && provider.serviceCategory) {
+                    const service = easysheba.getServiceByCategory(provider.serviceCategory);
+                    if (service) {
+                        serviceName = service.name;
+                        serviceIcon = service.icon || '🛠️';
+                    }
+                }
+                
+                // Format date
+                let bookingDate = 'Recent';
+                if (booking.createdAt) {
+                    try {
+                        const date = new Date(booking.createdAt);
+                        bookingDate = date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                    } catch (e) {
+                        // Keep default
+                    }
+                }
+                
+                // Status mapping
+                const statusMap = {
+                    'pending': { class: 'status-pending', text: 'Pending', icon: '⏳' },
+                    'confirmed': { class: 'status-confirmed', text: 'Confirmed', icon: '✅' },
+                    'assigned': { class: 'status-confirmed', text: 'Assigned', icon: '🚀' },
+                    'completed': { class: 'status-completed', text: 'Completed', icon: '🏁' },
+                    'cancelled': { class: 'status-pending', text: 'Cancelled', icon: '❌' }
+                };
+                
+                const status = statusMap[booking.status] || { class: 'status-pending', text: 'Pending', icon: '⏳' };
+                
+                html += `
+                    <div class="booking-item" onclick="viewBooking('${booking.bookingCode || booking.id}')">
+                        <div class="booking-icon">
+                            ${serviceIcon}
+                        </div>
+                        <div class="booking-details">
+                            <h4>${serviceName} with ${provider?.firstName || 'Provider'}</h4>
+                            <p>
+                                <i class="far fa-calendar"></i> ${bookingDate} • 
+                                <i class="far fa-clock"></i> ${booking.serviceTime || 'Flexible'} • 
+                                <i class="fas fa-money-bill-wave"></i> ৳${booking.totalAmount || 0}
+                            </p>
+                        </div>
+                        <span class="booking-status ${status.class}">
+                            ${status.icon} ${status.text}
+                        </span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function displayNoBookings() {
+            const container = document.getElementById('recent-bookings');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                    <i class="fas fa-calendar-plus" style="font-size: 48px; margin-bottom: 16px; display: block; color: #e5e7eb;"></i>
+                    <h3 style="margin-bottom: 8px; color: #9ca3af;">No Bookings Yet</h3>
+                    <p>Book your first service to get started</p>
+                    <button onclick="window.location.href='service-category.html?filter=all'" 
+                            style="margin-top: 16px; padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Browse Services
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadNotificationCount() {
+            try {
+                const notifications = easysheba.getNotificationsByUser(currentUser.id);
+                if (!notifications) return;
+                
+                const unreadCount = notifications.filter(n => !n.isRead).length;
+                
+                const badge = document.getElementById('notification-count');
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading notification count:', error);
+            }
+        }
+
+        function selectService(category) {
+            console.log('Service selected:', category);
+            localStorage.setItem('selectedCategory', category);
+            window.location.href = 'service-category.html?category=' + category;
+        }
+
+        function searchServices(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    localStorage.setItem('serviceSearchQuery', query);
+                    window.location.href = 'service-category.html?search=' + encodeURIComponent(query);
+                }
+            }
+        }
+
+        function viewBookings() {
+            window.location.href = 'customer-bookings.html';
+        }
+
+        function viewActiveBookings() {
+            window.location.href = 'customer-bookings.html?filter=active';
+        }
+
+        function viewSpending() {
+            window.location.href = 'customer-profile.html#payments';
+        }
+
+        function viewCancellations() {
+            window.location.href = 'customer-bookings.html?filter=cancelled';
+        }
+
+        function viewBooking(bookingCode) {
+            localStorage.setItem('viewBookingCode', bookingCode);
+            window.location.href = 'booking-details.html?code=' + bookingCode;
+        }
+
+        function showNotifications() {
+            try {
+                const notifications = easysheba.getNotificationsByUser(currentUser.id);
+                
+                // Create modal
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 1000;
+                    display: flex;
+                    justify-content: flex-end;
+                    animation: fadeIn 0.3s ease;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        width: 400px;
+                        background: white;
+                        height: 100%;
+                        padding: 24px;
+                        overflow-y: auto;
+                        box-shadow: -4px 0 30px rgba(0,0,0,0.1);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h3 style="font-size: 20px; font-weight: 700; color: var(--dark);">
+                                <i class="fas fa-bell"></i> Notifications
+                            </h3>
+                            <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" 
+                                    style="background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        ${!notifications || notifications.length === 0 ? `
+                            <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                                <i class="far fa-bell-slash" style="font-size: 48px; margin-bottom: 16px;"></i>
+                                <p>No notifications yet</p>
+                            </div>
+                        ` : notifications.map(notif => `
+                            <div style="
+                                padding: 16px;
+                                border-radius: 12px;
+                                background: ${notif.isRead ? '#f9fafb' : '#f0f9ff'};
+                                margin-bottom: 12px;
+                                border-left: 4px solid ${notif.type === 'success' ? '#10b981' : notif.type === 'error' ? '#ef4444' : '#1D4ED8'};
+                                cursor: pointer;
+                            " onclick="markNotificationAsRead(${notif.id})">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <strong style="color: var(--dark);">${notif.title || 'Notification'}</strong>
+                                    <small style="color: #9ca3af;">
+                                        ${notif.createdAt ? new Date(notif.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
+                                    </small>
+                                </div>
+                                <p style="color: #6b7280; font-size: 14px; margin: 0;">${notif.message || ''}</p>
+                                ${!notif.isRead ? '<div style="width: 8px; height: 8px; background: #1D4ED8; border-radius: 50%; margin-top: 8px;"></div>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error showing notifications:', error);
+                showToast('Error loading notifications', 'error');
+            }
+        }
+
+        function markNotificationAsRead(notificationId) {
+            try {
+                easysheba.markNotificationAsRead(notificationId);
+                loadNotificationCount();
+                showToast('Notification marked as read', 'success');
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+
+        function goToProfile() {
+            window.location.href = 'customer-profile.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#1D4ED8'};
+                animation: slideIn 0.3s ease;
+            `;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 3000);
+        }
+
+        // Debug function
+        window.debugDashboard = function() {
+            console.log('=== DASHBOARD DEBUG ===');
+            console.log('Current User:', currentUser);
+            console.log('LocalStorage services:', localStorage.getItem('services'));
+            console.log('easysheba.getServices():', easysheba.getServices());
+            console.log('easysheba.getProviders():', easysheba.getProviders());
+            console.log('easysheba.getBookings():', easysheba.getBookings());
+        };
+    </script>
+</body>
+</html>

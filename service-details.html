@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Service Details</title>
+    <script src="data-storage.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 100px;
+        }
+
+        .service-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+        }
+
+        .provider-section {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            margin-top: -20px;
+            padding: 20px;
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .provider-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .provider-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .provider-rating {
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
+
+        .verification-badge {
+            display: inline-block;
+            background: #22C55E;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .service-details {
+            margin: 20px 0;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .price-highlight {
+            font-size: 1.5rem;
+            color: #1D4ED8;
+            font-weight: 700;
+        }
+
+        .description {
+            margin: 20px 0;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #4b5563;
+        }
+
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+            background: #22C55E;
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Service Details</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="service-image" id="service-icon">
+            <!-- Service icon will be inserted here -->
+        </div>
+
+        <div class="provider-section">
+            <div class="provider-header">
+                <div class="provider-avatar" id="provider-avatar">
+                    <!-- Avatar initials -->
+                </div>
+                <div class="provider-info">
+                    <h3 id="provider-name">
+                        <!-- Provider name -->
+                        <span class="verification-badge" id="verification-badge"></span>
+                    </h3>
+                    <div class="provider-rating" id="provider-rating">
+                        <!-- Rating and experience -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-details">
+                <div class="detail-item">
+                    <span class="detail-label">Service Type</span>
+                    <span class="detail-value" id="service-type"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Experience</span>
+                    <span class="detail-value" id="provider-experience"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Service Areas</span>
+                    <span class="detail-value" id="service-areas"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Response Time</span>
+                    <span class="detail-value">Within 1 hour</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Hourly Rate</span>
+                    <span class="detail-value price-highlight" id="hourly-rate"></span>
+                </div>
+            </div>
+
+            <div class="description">
+                <h4 style="margin-top: 0;">About this service</h4>
+                <p id="service-description">
+                    <!-- Service description will be inserted here -->
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-secondary" onclick="sendPriceOffer()">
+            💰 Negotiate Price
+        </button>
+        <button class="btn-primary" onclick="bookNow()">
+            Book Now
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServiceDetails();
+        });
+
+        function loadServiceDetails() {
+            const providerId = localStorage.getItem('selectedProviderId');
+            const category = localStorage.getItem('selectedCategory');
+            
+            if (!providerId || !category) {
+                showToast('Provider or service not selected', 'error');
+                setTimeout(() => {
+                    window.location.href = 'customer-dashboard.html';
+                }, 2000);
+                return;
+            }
+
+            // Get provider details
+            const provider = easysheba.getUserById(parseInt(providerId));
+            if (!provider) {
+                showToast('Provider not found', 'error');
+                return;
+            }
+
+            // Get service details
+            const services = easysheba.getServices();
+            const service = services.find(s => s.category === category);
+            
+            // Display provider info
+            const initials = (provider.firstName.charAt(0) + (provider.lastName.charAt(0) || '')).toUpperCase();
+            document.getElementById('provider-avatar').textContent = initials;
+            document.getElementById('provider-name').innerHTML = 
+                `${provider.firstName} ${provider.lastName}`;
+            
+            if (provider.isVerified) {
+                document.getElementById('verification-badge').textContent = '✓ Verified';
+            } else {
+                document.getElementById('verification-badge').textContent = 'Not Verified';
+                document.getElementById('verification-badge').style.background = '#6b7280';
+            }
+            
+            document.getElementById('provider-rating').innerHTML = 
+                `⭐ ${provider.rating || 'New'} • ${provider.experience || 0} years experience`;
+            
+            // Display service info
+            document.getElementById('service-type').textContent = 
+                service ? service.name : category;
+            document.getElementById('provider-experience').textContent = 
+                `${provider.experience || 0} years`;
+            document.getElementById('service-areas').textContent = 
+                provider.areas || 'Various areas';
+            document.getElementById('hourly-rate').textContent = 
+                `৳${provider.hourlyRate || 0}/hour`;
+            document.getElementById('service-description').textContent = 
+                provider.bio || 'Professional service with quality guarantee';
+            
+            // Set service icon
+            const serviceIcon = document.getElementById('service-icon');
+            if (service && service.icon) {
+                serviceIcon.innerHTML = service.icon;
+            } else {
+                // Default icons based on category
+                const iconMap = {
+                    'electrician': '⚡',
+                    'plumber': '🔧',
+                    'cleaner': '🧹',
+                    'ac-repair': '❄️',
+                    'painter': '🎨',
+                    'carpenter': '🪚',
+                    'gardener': '🌿',
+                    'mechanic': '🔩'
+                };
+                serviceIcon.innerHTML = iconMap[category] || '🛠️';
+            }
+        }
+
+        function sendPriceOffer() {
+            const providerId = localStorage.getItem('selectedProviderId');
+            const provider = easysheba.getUserById(parseInt(providerId));
+            
+            if (!provider) {
+                showToast('Provider not found', 'error');
+                return;
+            }
+            
+            const offerAmount = prompt(`Enter your offer amount (Current rate: ৳${provider.hourlyRate}/hour):`);
+            
+            if (!offerAmount || isNaN(offerAmount)) {
+                showToast('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            // Generate chat ID
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const chatId = `chat_${Math.min(currentUser.id, provider.id)}_${Math.max(currentUser.id, provider.id)}`;
+            
+            const offer = {
+                chatId: chatId,
+                fromUserId: currentUser.id,
+                toUserId: provider.id,
+                amount: parseInt(offerAmount),
+                message: `Price offer from ${currentUser.firstName}`,
+                status: 'pending'
+            };
+            
+            easysheba.addOffer(offer);
+            showToast('Price offer sent to provider!');
+            
+            // Redirect to chat page
+            localStorage.setItem('chatWithProvider', providerId);
+            setTimeout(() => {
+                window.location.href = 'chat.html';
+            }, 1500);
+        }
+
+        function bookNow() {
+            const providerId = localStorage.getItem('selectedProviderId');
+            const category = localStorage.getItem('selectedCategory');
+            
+            if (!providerId || !category) {
+                showToast('Please select a provider first', 'error');
+                return;
+            }
+            
+            window.location.href = 'booking-form.html';
+        }
+
+        function goBack() {
+            window.location.href = 'service-category.html';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'auth.html';
+            }
+        }
+    </script>
+</body>
+</html>

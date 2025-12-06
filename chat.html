@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Chat</title>
+    <script src="data-storage.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1D4ED8;
+            --secondary: #22C55E;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: var(--dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-2px);
+        }
+
+        .chat-partner-info {
+            flex: 1;
+        }
+
+        .chat-partner-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-partner-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .chat-partner-status {
+            font-size: 12px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .header-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            height: calc(100vh - 160px);
+            display: flex;
+            flex-direction: column;
+            margin-top: 72px;
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            padding-bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #f8fafc;
+        }
+
+        /* Date Separator */
+        .date-separator {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .date-separator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+            z-index: 1;
+        }
+
+        .date-label {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            display: inline-block;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Message Styles */
+        .message {
+            display: flex;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.received {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .message.sent .message-avatar {
+            margin-left: 12px;
+            margin-right: 0;
+        }
+
+        .message.received .message-avatar {
+            margin-right: 12px;
+        }
+
+        .message-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.sent .message-content {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 8px rgba(29, 78, 216, 0.2);
+        }
+
+        .message.received .message-content {
+            background: white;
+            color: var(--dark);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        .message.received .message-time {
+            text-align: left;
+        }
+
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        /* Offer Message */
+        .offer-message {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px auto;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .offer-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .offer-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .offer-message-text {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 12px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+        }
+
+        .offer-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        /* Chat Input */
+        .chat-input {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            padding: 16px 24px;
+            z-index: 100;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .offer-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--warning), #f59e0b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .offer-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--primary); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: 12px 16px;
+            }
+
+            .chat-messages {
+                padding: 16px;
+                padding-bottom: 80px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .chat-input {
+                padding: 12px 16px;
+            }
+
+            .modal-content {
+                padding: 24px;
+                margin: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message-avatar {
+                display: none;
+            }
+
+            .message.sent .message-avatar {
+                margin-left: 0;
+            }
+
+            .message.received .message-avatar {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="chat-header">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="chat-partner-avatar" id="partner-avatar">P</div>
+        
+        <div class="chat-partner-info">
+            <div class="chat-partner-name" id="partner-name">Loading...</div>
+            <div class="chat-partner-status">
+                <span class="status-indicator"></span>
+                <span id="partner-status">Online</span>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button class="header-btn" onclick="viewProfile()">
+                <i class="fas fa-user"></i>
+            </button>
+            <button class="header-btn" onclick="showInfo()">
+                <i class="fas fa-info-circle"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input">
+        <div id="offer-section"></div>
+        
+        <button class="offer-button" onclick="showPriceOfferModal()">
+            <i class="fas fa-handshake"></i> Make Price Offer
+        </button>
+        
+        <div class="input-container">
+            <input type="text" class="message-input" id="message-input" 
+                   placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Price Offer Modal -->
+    <div id="offer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Make Price Offer</h3>
+                <p class="modal-subtitle">Propose a custom rate for this service</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Offer Amount (৳)</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #6b7280;">৳</span>
+                    <input type="number" class="form-control" id="offer-amount" 
+                           placeholder="500" style="padding-left: 40px;">
+                </div>
+                <small style="color: #6b7280; font-size: 12px; display: block; margin-top: 4px;">
+                    Provider's rate: ৳<span id="provider-rate">0</span>/hour
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Message (Optional)</label>
+                <textarea class="form-control" id="offer-message" 
+                          placeholder="Add a message explaining your offer..."
+                          rows="3"></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeOfferModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary" onclick="sendPriceOffer()">
+                    <i class="fas fa-paper-plane"></i> Send Offer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatId = null;
+        let chatPartner = null;
+        let currentUser = null;
+        let chatInterval = null;
+        let lastMessageDate = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(userData);
+                initializeChat();
+                
+                // Auto-refresh chat every 5 seconds
+                chatInterval = setInterval(loadMessages, 5000);
+                
+                // Clean up interval when page unloads
+                window.addEventListener('beforeunload', function() {
+                    if (chatInterval) {
+                        clearInterval(chatInterval);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = 'auth.html';
+            }
+        });
+
+        function initializeChat() {
+            // Determine who we're chatting with
+            let partnerId = null;
+            
+            if (currentUser.userType === 'customer') {
+                partnerId = localStorage.getItem('chatWithProvider') || 
+                           localStorage.getItem('selectedProviderId');
+            } else if (currentUser.userType === 'provider') {
+                partnerId = localStorage.getItem('chatWithCustomer');
+            }
+            
+            if (!partnerId) {
+                showToast('No chat partner selected', 'error');
+                setTimeout(() => {
+                    window.location.href = currentUser.userType === 'customer' ? 
+                        'customer-dashboard.html' : 'provider-jobs.html';
+                }, 1500);
+                return;
+            }
+            
+            // Get partner info
+            chatPartner = easysheba.getUserById(parseInt(partnerId));
+            if (!chatPartner) {
+                showToast('Chat partner not found', 'error');
+                setTimeout(() => {
+                    window.location.href = currentUser.userType === 'customer' ? 
+                        'customer-dashboard.html' : 'provider-jobs.html';
+                }, 1500);
+                return;
+            }
+            
+            // Set chat info
+            document.getElementById('partner-name').textContent = 
+                `${chatPartner.firstName} ${chatPartner.lastName}`;
+            document.getElementById('partner-avatar').textContent = 
+                (chatPartner.firstName.charAt(0) + chatPartner.lastName.charAt(0)).toUpperCase();
+            
+            // Set provider rate if applicable
+            if (currentUser.userType === 'customer' && chatPartner.hourlyRate) {
+                document.getElementById('provider-rate').textContent = chatPartner.hourlyRate;
+            }
+            
+            // Generate chat ID
+            chatId = `chat_${Math.min(currentUser.id, chatPartner.id)}_${Math.max(currentUser.id, chatPartner.id)}`;
+            
+            // Load messages
+            loadMessages();
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        function loadMessages() {
+            const messages = easysheba.getChatMessages(chatId);
+            const container = document.getElementById('chat-messages');
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #9ca3af;">
+                        <i class="fas fa-comments" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Start a conversation</h3>
+                        <p style="font-size: 14px;">Send a message to begin chatting</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            let currentDate = '';
+            
+            messages.forEach((message, index) => {
+                const messageDate = new Date(message.timestamp).toDateString();
+                const isSent = message.senderId === currentUser.id;
+                const partnerInitials = chatPartner ? 
+                    (chatPartner.firstName.charAt(0) + chatPartner.lastName.charAt(0)).toUpperCase() : 'P';
+                const userInitials = currentUser ? 
+                    (currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0)).toUpperCase() : 'U';
+                
+                // Add date separator if date changed
+                if (messageDate !== currentDate) {
+                    currentDate = messageDate;
+                    const formattedDate = new Date(message.timestamp).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    html += `
+                        <div class="date-separator">
+                            <span class="date-label">${formattedDate}</span>
+                        </div>
+                    `;
+                }
+                
+                // Check if this is an offer message
+                if (message.type === 'offer') {
+                    html += `
+                        <div class="offer-message">
+                            <div class="offer-title">
+                                <i class="fas fa-handshake"></i>
+                                Price Offer
+                            </div>
+                            <div class="offer-amount">৳${message.amount || '0'}</div>
+                            ${message.text ? `
+                                <div class="offer-message-text">
+                                    ${message.text}
+                                </div>
+                            ` : ''}
+                            ${!isSent && !message.responded ? `
+                                <div class="offer-actions">
+                                    <button class="btn btn-primary" onclick="acceptOffer('${message.offerId}')">
+                                        <i class="fas fa-check"></i> Accept
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="rejectOffer('${message.offerId}')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            ` : message.responded ? `
+                                <div style="color: ${message.responded === 'accepted' ? '#10b981' : '#ef4444'}; font-weight: 600;">
+                                    <i class="fas fa-${message.responded === 'accepted' ? 'check-circle' : 'times-circle'}"></i>
+                                    Offer ${message.responded}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    // Regular message
+                    const time = new Date(message.timestamp).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    html += `
+                        <div class="message ${isSent ? 'sent' : 'received'}">
+                            ${!isSent ? `
+                                <div class="message-avatar">${partnerInitials}</div>
+                            ` : ''}
+                            
+                            <div class="message-content-wrapper">
+                                <div class="message-content">
+                                    ${message.text}
+                                </div>
+                                <div class="message-time">
+                                    ${time}
+                                    ${isSent ? `
+                                        <span class="message-status">
+                                            ${message.isRead ? '<i class="fas fa-check-double" style="color: #22C55E;"></i>' : 
+                                              '<i class="fas fa-check" style="color: #9ca3af;"></i>'}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            
+                            ${isSent ? `
+                                <div class="message-avatar">${userInitials}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html;
+            
+            // Scroll to bottom if not at bottom
+            const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 100;
+            if (isScrolledToBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            // Load offers
+            loadOffers();
+        }
+
+        function loadOffers() {
+            const offers = easysheba.getOffers();
+            const activeOffer = offers.find(o => 
+                o.chatId === chatId && 
+                o.status === 'pending' &&
+                ((currentUser.userType === 'customer' && o.fromUserId === chatPartner.id) ||
+                 (currentUser.userType === 'provider' && o.toUserId === currentUser.id))
+            );
+            
+            const offerSection = document.getElementById('offer-section');
+            
+            if (activeOffer) {
+                offerSection.innerHTML = `
+                    <div class="offer-message">
+                        <div class="offer-title">
+                            <i class="fas fa-bullhorn"></i>
+                            New Price Offer Received
+                        </div>
+                        <div class="offer-amount">৳${activeOffer.amount}/hour</div>
+                        ${activeOffer.message ? `
+                            <div class="offer-message-text">
+                                ${activeOffer.message}
+                            </div>
+                        ` : ''}
+                        <div class="offer-actions">
+                            <button class="btn btn-primary" onclick="acceptOffer(${activeOffer.id})">
+                                <i class="fas fa-check"></i> Accept Offer
+                            </button>
+                            <button class="btn btn-secondary" onclick="counterOffer(${activeOffer.amount})">
+                                <i class="fas fa-exchange-alt"></i> Counter Offer
+                            </button>
+                            <button class="btn btn-secondary" style="background: #f1f5f9;" onclick="rejectOffer(${activeOffer.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                offerSection.innerHTML = '';
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const message = {
+                text,
+                senderId: currentUser.id,
+                senderName: `${currentUser.firstName} ${currentUser.lastName}`,
+                type: 'text',
+                isRead: false
+            };
+            
+            easysheba.addChatMessage(chatId, message);
+            input.value = '';
+            loadMessages();
+            
+            // Notify the other user
+            easysheba.addNotification({
+                userId: chatPartner.id,
+                title: 'New Message',
+                message: `${currentUser.firstName}: ${text.substring(0, 30)}...`,
+                type: 'info',
+                chatId: chatId,
+                isRead: false
+            });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function showPriceOfferModal() {
+            if (currentUser.userType !== 'customer') {
+                showToast('Only customers can make price offers', 'info');
+                return;
+            }
+            
+            document.getElementById('offer-modal').style.display = 'flex';
+            document.getElementById('offer-amount').value = chatPartner.hourlyRate || '';
+            document.getElementById('offer-message').value = '';
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offer-modal').style.display = 'none';
+        }
+
+        function sendPriceOffer() {
+            const amount = parseInt(document.getElementById('offer-amount').value);
+            const message = document.getElementById('offer-message').value.trim();
+            
+            if (!amount || isNaN(amount)) {
+                showToast('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            if (amount < 100 || amount > 5000) {
+                showToast('Amount must be between ৳100 and ৳5000', 'error');
+                return;
+            }
+            
+            // Create offer
+            const offer = easysheba.addOffer({
+                chatId: chatId,
+                fromUserId: currentUser.id,
+                toUserId: chatPartner.id,
+                amount: amount,
+                message: message,
+                status: 'pending'
+            });
+            
+            // Send as chat message
+            easysheba.addChatMessage(chatId, {
+                text: message ? `Price offer: ৳${amount}/hour - ${message}` : `Price offer: ৳${amount}/hour`,
+                senderId: currentUser.id,
+                senderName: `${currentUser.firstName} ${currentUser.lastName}`,
+                type: 'offer',
+                amount: amount,
+                offerId: offer.id
+            });
+            
+            closeOfferModal();
+            loadMessages();
+            showToast('Price offer sent!', 'success');
+        }
+
+        function acceptOffer(offerId) {
+            easysheba.updateOfferStatus(offerId, 'accepted');
+            
+            // Send acceptance message
+            easysheba.addChatMessage(chatId, {
+                text: '✅ Price offer accepted!',
+                senderId: currentUser.id,
+                senderName: `${currentUser.firstName} ${currentUser.lastName}`,
+                type: 'response',
+                responded: 'accepted'
+            });
+            
+            // If customer accepted, redirect to booking
+            if (currentUser.userType === 'customer') {
+                showToast('Offer accepted! Redirecting to booking...', 'success');
+                setTimeout(() => {
+                    localStorage.setItem('selectedProviderId', chatPartner.id);
+                    window.location.href = 'booking-form.html';
+                }, 1500);
+            } else {
+                showToast('Offer accepted!', 'success');
+            }
+            
+            loadMessages();
+        }
+
+        function rejectOffer(offerId) {
+            if (confirm('Are you sure you want to reject this offer?')) {
+                easysheba.updateOfferStatus(offerId, 'rejected');
+                
+                // Send rejection message
+                easysheba.addChatMessage(chatId, {
+                    text: '❌ Price offer rejected',
+                    senderId: currentUser.id,
+                    senderName: `${currentUser.firstName} ${currentUser.lastName}`,
+                    type: 'response',
+                    responded: 'rejected'
+                });
+                
+                showToast('Offer rejected', 'info');
+                loadMessages();
+            }
+        }
+
+        function counterOffer(currentAmount) {
+            const newAmount = prompt('Enter your counter offer:', parseInt(currentAmount) + 100);
+            if (newAmount && !isNaN(newAmount)) {
+                document.getElementById('offer-amount').value = newAmount;
+                showPriceOfferModal();
+            }
+        }
+
+        function viewProfile() {
+            if (chatPartner) {
+                localStorage.setItem('viewProfileId', chatPartner.id);
+                window.location.href = 'provider-profile.html';
+            }
+        }
+
+        function showInfo() {
+            showToast(`Chatting with ${chatPartner.firstName} ${chatPartner.lastName}`, 'info');
+        }
+
+        function goBack() {
+            if (currentUser.userType === 'customer') {
+                window.location.href = 'customer-bookings.html';
+            } else {
+                window.location.href = 'provider-jobs.html';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                   type === 'error' ? 'exclamation-circle' : 
+                                   'info-circle'}"></i>
+                ${message}
+            `;
+            
+            // Remove existing toasts
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

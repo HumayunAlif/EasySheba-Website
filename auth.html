@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Login & Signup</title>
+    <script src="data-storage.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1D4ED8;
+            --secondary: #22C55E;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text {
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tagline {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            max-width: 300px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Auth Card */
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 6px;
+            height: calc(100% - 12px);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+        }
+
+        /* Forms */
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Elements */
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+        }
+
+        .form-control.error {
+            border-color: var(--danger);
+        }
+
+        .form-control.success {
+            border-color: var(--success);
+        }
+
+        /* User Type Selection */
+        .user-type-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .user-type-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .user-type-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .user-type-card.selected {
+            border-color: var(--primary);
+            background: rgba(29, 78, 216, 0.05);
+            box-shadow: 0 4px 20px rgba(29, 78, 216, 0.15);
+        }
+
+        .user-type-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .user-type-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .user-type-desc {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        /* Provider Fields */
+        .provider-fields {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .provider-fields.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 8px;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Form Footer */
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .form-footer-text {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .toggle-link {
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Admin Login */
+        .admin-login {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(29, 78, 216, 0.05);
+            border-radius: 12px;
+        }
+
+        .admin-login-text {
+            color: var(--dark);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--primary); }
+
+        /* Password Toggle */
+        .password-input {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 24px;
+            }
+
+            .logo-wrapper {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-text {
+                font-size: 28px;
+            }
+
+            .user-type-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .toast {
+                left: 16px;
+                right: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <div class="logo-icon">🛠️</div>
+                <div class="logo-text">EasySheba</div>
+            </div>
+            <p class="logo-tagline">Your Trusted Service Partner - Connecting Customers with Professional Service Providers</p>
+        </div>
+
+        <!-- Auth Card -->
+        <div class="auth-card">
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <div class="tab-indicator" id="tab-indicator"></div>
+                <div class="auth-tab active" onclick="switchAuthTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </div>
+                <div class="auth-tab" onclick="switchAuthTab('signup')">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="login-form" onsubmit="return login(event)">
+                <div class="form-header">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <p class="form-subtitle">Sign in to your EasySheba account</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="login-email" 
+                           placeholder="you@example.com" required>
+                    <div class="error-message" id="login-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="login-password" 
+                               placeholder="Enter your password" required>
+                        <span class="password-toggle" onclick="togglePassword('login-password', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="error-message" id="login-password-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login to EasySheba
+                    </button>
+                </div>
+
+                <div class="admin-login">
+                    <p class="admin-login-text">Admin Access</p>
+                    <button type="button" class="btn btn-outline" onclick="fillAdminCredentials()">
+                        <i class="fas fa-user-shield"></i> Admin Login
+                    </button>
+                </div>
+
+                <div class="form-footer">
+                    <p class="form-footer-text">
+                        Don't have an account? 
+                        <span class="toggle-link" onclick="switchAuthTab('signup')">Sign up here</span>
+                    </p>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form class="auth-form" id="signup-form" onsubmit="return signup(event)">
+                <div class="form-header">
+                    <h2 class="form-title">Join EasySheba</h2>
+                    <p class="form-subtitle">Create your account to get started</p>
+                </div>
+
+                <!-- User Type Selection -->
+                <div class="user-type-selection">
+                    <div class="user-type-card selected" onclick="selectUserType('customer')">
+                        <div class="user-type-icon">👤</div>
+                        <div class="user-type-title">Customer</div>
+                        <div class="user-type-desc">Find and book trusted service providers</div>
+                    </div>
+                    <div class="user-type-card" onclick="selectUserType('provider')">
+                        <div class="user-type-icon">🛠️</div>
+                        <div class="user-type-title">Service Provider</div>
+                        <div class="user-type-desc">Offer your services and earn money</div>
+                    </div>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <input type="text" class="form-control" id="signup-firstName" 
+                               placeholder="First Name" required>
+                        <input type="text" class="form-control" id="signup-lastName" 
+                               placeholder="Last Name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="signup-email" 
+                           placeholder="you@example.com" required>
+                    <div class="error-message" id="signup-email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="signup-phone" 
+                           placeholder="017XXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="signup-password" 
+                               placeholder="Create a password" required minlength="6"
+                               oninput="checkPasswordStrength(this.value)">
+                        <span class="password-toggle" onclick="togglePassword('signup-password', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <div class="strength-text" id="strength-text">Password strength</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="signup-confirmPassword" 
+                               placeholder="Confirm your password" required>
+                        <span class="password-toggle" onclick="togglePassword('signup-confirmPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="error-message" id="signup-password-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-control" id="signup-address" 
+                              placeholder="Enter your address (optional)" rows="2"></textarea>
+                </div>
+
+                <!-- Provider Specific Fields -->
+                <div class="provider-fields" id="provider-fields">
+                    <h3 class="section-title">
+                        <i class="fas fa-tools"></i>
+                        Service Information
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Category</label>
+                        <select class="form-control" id="provider-category" required>
+                            <option value="">Select your service</option>
+                            <option value="electrician">⚡ Electrician</option>
+                            <option value="plumber">🚿 Plumber</option>
+                            <option value="cleaner">🧹 Cleaner</option>
+                            <option value="ac-repair">❄️ AC Repair</option>
+                            <option value="painter">🎨 Painter</option>
+                            <option value="carpenter">🪚 Carpenter</option>
+                            <option value="gardener">🌿 Gardener</option>
+                            <option value="mechanic">🔧 Mechanic</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Hourly Rate (৳)</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #6b7280;">৳</span>
+                            <input type="number" class="form-control" id="provider-hourlyRate" 
+                                   placeholder="500" min="100" max="5000" step="50"
+                                   style="padding-left: 40px;" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Experience (Years)</label>
+                        <input type="number" class="form-control" id="provider-experience" 
+                               placeholder="3" min="0" max="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Service Areas</label>
+                        <textarea class="form-control" id="provider-areas" 
+                                  placeholder="Gulshan, Banani, Baridhara..." rows="2" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Bio/Description</label>
+                        <textarea class="form-control" id="provider-bio" 
+                                  placeholder="Describe your skills, experience, and what makes you unique..." 
+                                  rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="signup-btn">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+
+                <div class="form-footer">
+                    <p class="form-footer-text">
+                        Already have an account? 
+                        <span class="toggle-link" onclick="switchAuthTab('login')">Login here</span>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedUserType = 'customer';
+
+        // Initialize tab indicator position
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTabIndicator();
+            // Initialize data storage
+            easysheba.init();
+        });
+
+        function updateTabIndicator() {
+            const activeTab = document.querySelector('.auth-tab.active');
+            const indicator = document.getElementById('tab-indicator');
+            if (activeTab && indicator) {
+                const tabWidth = activeTab.offsetWidth;
+                const tabLeft = activeTab.offsetLeft;
+                indicator.style.width = `${tabWidth}px`;
+                indicator.style.transform = `translateX(${tabLeft}px)`;
+            }
+        }
+
+        function switchAuthTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            const tabIndex = tab === 'login' ? 0 : 1;
+            document.querySelectorAll('.auth-tab')[tabIndex].classList.add('active');
+            
+            // Update forms
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('signup-form').classList.remove('active');
+            document.getElementById(tab + '-form').classList.add('active');
+            
+            // Update indicator
+            updateTabIndicator();
+            
+            // Reset errors
+            clearErrors();
+            
+            // Reset form if switching to signup
+            if (tab === 'signup') {
+                resetSignupForm();
+            }
+        }
+
+        function selectUserType(type) {
+            selectedUserType = type;
+            
+            // Update UI
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide provider fields
+            const providerFields = document.getElementById('provider-fields');
+            if (type === 'provider') {
+                providerFields.classList.add('show');
+                
+                // Make provider fields required
+                document.getElementById('provider-category').required = true;
+                document.getElementById('provider-hourlyRate').required = true;
+                document.getElementById('provider-areas').required = true;
+            } else {
+                providerFields.classList.remove('show');
+                
+                // Remove required from provider fields
+                document.getElementById('provider-category').required = false;
+                document.getElementById('provider-hourlyRate').required = false;
+                document.getElementById('provider-areas').required = false;
+            }
+        }
+
+        function togglePassword(inputId, toggleBtn) {
+            const input = document.getElementById(inputId);
+            const icon = toggleBtn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength(password) {
+            const fill = document.getElementById('strength-fill');
+            const text = document.getElementById('strength-text');
+            
+            let strength = 0;
+            let color = '#ef4444';
+            let message = 'Weak';
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            const percentage = (strength / 5) * 100;
+            
+            if (percentage >= 80) {
+                color = '#10b981';
+                message = 'Strong';
+            } else if (percentage >= 60) {
+                color = '#22C55E';
+                message = 'Good';
+            } else if (percentage >= 40) {
+                color = '#f59e0b';
+                message = 'Fair';
+            }
+            
+            fill.style.width = `${percentage}%`;
+            fill.style.background = color;
+            text.textContent = message;
+            text.style.color = color;
+        }
+
+        function fillAdminCredentials() {
+            document.getElementById('login-email').value = 'admin@easysheba.com';
+            document.getElementById('login-password').value = 'admin123';
+            showToast('Admin credentials filled. Click Login to continue.', 'info');
+        }
+
+        function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Basic validation
+            if (!email || !password) {
+                showToast('Please fill in all fields', 'error');
+                return false;
+            }
+            
+            // Disable login button
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            
+            try {
+                // Find user by email
+                const user = easysheba.getUserByEmail(email);
+                
+                if (!user) {
+                    showError('login-email-error', 'Email not registered');
+                    showToast('Email not found. Please sign up first.', 'error');
+                    resetLoginButton();
+                    return false;
+                }
+                
+                if (user.password !== password) {
+                    showError('login-password-error', 'Incorrect password');
+                    showToast('Incorrect password', 'error');
+                    resetLoginButton();
+                    return false;
+                }
+                
+                if (!user.isActive) {
+                    showToast('Account is deactivated. Contact support.', 'error');
+                    resetLoginButton();
+                    return false;
+                }
+                
+                // Login successful
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('userType', user.userType);
+                
+                showToast('Login successful! Redirecting...', 'success');
+                
+                // Redirect based on user type
+                setTimeout(() => {
+                    if (user.userType === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else if (user.userType === 'customer') {
+                        window.location.href = 'customer-dashboard.html';
+                    } else if (user.userType === 'provider') {
+                        // Check if provider has completed setup
+                        if (!user.serviceCategory || !user.hourlyRate) {
+                            window.location.href = 'provider-setup.html';
+                        } else {
+                            window.location.href = 'provider-jobs.html';
+                        }
+                    }
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Login failed. Please try again.', 'error');
+                resetLoginButton();
+            }
+            
+            return false;
+        }
+
+        function signup(event) {
+            event.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Get form values
+            const firstName = document.getElementById('signup-firstName').value.trim();
+            const lastName = document.getElementById('signup-lastName').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const phone = document.getElementById('signup-phone').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirmPassword').value;
+            const address = document.getElementById('signup-address').value.trim();
+            
+            // Validation
+            if (!firstName || !lastName || !email || !phone || !password || !confirmPassword) {
+                showToast('Please fill in all required fields', 'error');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showError('signup-password-error', 'Password must be at least 6 characters');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('signup-password-error', 'Passwords do not match');
+                return false;
+            }
+            
+            // Check if email already exists
+            if (easysheba.getUserByEmail(email)) {
+                showError('signup-email-error', 'Email already registered');
+                return false;
+            }
+            
+            // Provider specific validation
+            if (selectedUserType === 'provider') {
+                const serviceCategory = document.getElementById('provider-category').value;
+                const hourlyRate = parseInt(document.getElementById('provider-hourlyRate').value) || 0;
+                const areas = document.getElementById('provider-areas').value.trim();
+                
+                if (!serviceCategory || !hourlyRate || !areas) {
+                    showToast('Please fill all provider details', 'error');
+                    return false;
+                }
+                
+                if (hourlyRate < 100 || hourlyRate > 5000) {
+                    showToast('Hourly rate must be between ৳100 and ৳5000', 'error');
+                    return false;
+                }
+            }
+            
+            // Disable signup button
+            const signupBtn = document.getElementById('signup-btn');
+            signupBtn.disabled = true;
+            signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+            
+            try {
+                // Create user object
+                const user = {
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    password,
+                    address: address || '',
+                    userType: selectedUserType,
+                    isVerified: false,
+                    isActive: true,
+                    earnings: 0,
+                    createdAt: new Date().toISOString(),
+                    profileImage: null,
+                    lastLogin: null
+                };
+                
+                // Add provider specific fields
+                if (selectedUserType === 'provider') {
+                    user.serviceCategory = document.getElementById('provider-category').value;
+                    user.hourlyRate = parseInt(document.getElementById('provider-hourlyRate').value);
+                    user.experience = parseInt(document.getElementById('provider-experience').value) || 0;
+                    user.areas = document.getElementById('provider-areas').value.trim();
+                    user.bio = document.getElementById('provider-bio').value.trim();
+                    user.rating = 0;
+                    user.totalJobs = 0;
+                    user.completedSetup = false;
+                }
+                
+                // Add user to storage
+                const newUser = easysheba.addUser(user);
+                
+                showToast('Account created successfully! Please login.', 'success');
+                
+                // Switch to login tab after successful signup
+                setTimeout(() => {
+                    // Reset signup form
+                    resetSignupForm();
+                    
+                    // Switch to login tab
+                    switchAuthTab('login');
+                    
+                    // Auto-fill login email
+                    document.getElementById('login-email').value = email;
+                    
+                    // Enable signup button
+                    signupBtn.disabled = false;
+                    signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showToast(error.message || 'Signup failed. Please try again.', 'error');
+                signupBtn.disabled = false;
+                signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+            
+            return false;
+        }
+
+        function resetSignupForm() {
+            // Reset all signup form fields
+            document.getElementById('signup-firstName').value = '';
+            document.getElementById('signup-lastName').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-phone').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-confirmPassword').value = '';
+            document.getElementById('signup-address').value = '';
+            document.getElementById('provider-category').value = '';
+            document.getElementById('provider-hourlyRate').value = '';
+            document.getElementById('provider-experience').value = '';
+            document.getElementById('provider-areas').value = '';
+            document.getElementById('provider-bio').value = '';
+            
+            // Reset password strength
+            document.getElementById('strength-fill').style.width = '0%';
+            document.getElementById('strength-text').textContent = 'Password strength';
+            document.getElementById('strength-text').style.color = '#6b7280';
+            
+            // Reset user type to customer
+            selectedUserType = 'customer';
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelectorAll('.user-type-card')[0].classList.add('selected');
+            
+            // Hide provider fields
+            document.getElementById('provider-fields').classList.remove('show');
+        }
+
+        function resetLoginButton() {
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to EasySheba';
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                   type === 'error' ? 'exclamation-circle' : 
+                                   'info-circle'}"></i>
+                ${message}
+            `;
+            
+            // Remove existing toasts
+            document.querySelectorAll('.toast').forEach(t => t.remove());
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

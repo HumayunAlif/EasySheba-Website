@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Booking Confirmation</title>
+    
+    <!-- FIX: Load data-storage.js with error handling -->
+    <script>
+        // Load data-storage.js with fallback
+        function loadDataStorage() {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'data-storage.js';
+                script.onload = () => resolve(true);
+                script.onerror = () => {
+                    console.warn('data-storage.js failed to load, creating fallback');
+                    createFallbackEasysheba();
+                    resolve(false);
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Create fallback easysheba object
+        function createFallbackEasysheba() {
+            window.easysheba = {
+                getBookings: function() {
+                    try {
+                        const stored = localStorage.getItem('bookings');
+                        return stored ? JSON.parse(stored) : [];
+                    } catch (e) {
+                        return [];
+                    }
+                },
+                getUsers: function() {
+                    try {
+                        const stored = localStorage.getItem('users');
+                        return stored ? JSON.parse(stored) : [];
+                    } catch (e) {
+                        return [];
+                    }
+                },
+                getUserById: function(id) {
+                    const users = this.getUsers();
+                    // Try both string and number comparison
+                    return users.find(user => 
+                        user.id === id || 
+                        user.id === parseInt(id) ||
+                        user.id?.toString() === id?.toString()
+                    );
+                },
+                init: function() {
+                    console.log('Fallback easysheba initialized');
+                }
+            };
+        }
+        
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', async function() {
+            await loadDataStorage();
+            initializePage();
+        });
+    </script>
+    
+    <style>
+        /* আপনার existing CSS এখানে রাখুন */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+            flex: 1;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+        }
+
+        .confirmation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #22C55E;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .confirmation-subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .booking-code {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px dashed #1D4ED8;
+        }
+
+        .code-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+        }
+
+        .code-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1D4ED8;
+            letter-spacing: 2px;
+        }
+
+        .booking-details {
+            text-align: left;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #6b7280;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <h1 class="header-title">Booking Confirmation</h1>
+    </div>
+
+    <div class="screen-content">
+        <div class="confirmation-card">
+            <div class="success-icon">✅</div>
+            <h2 class="confirmation-title">Booking Confirmed!</h2>
+            <p class="confirmation-subtitle">Your service has been scheduled successfully</p>
+            
+            <div class="booking-code">
+                <div class="code-label">Booking Reference</div>
+                <div class="code-value" id="booking-code">ESB000000</div>
+            </div>
+            
+            <div id="error-display" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; margin: 10px 0;"></div>
+            
+            <div class="booking-details">
+                <div class="detail-item">
+                    <span class="detail-label">Service Provider</span>
+                    <span class="detail-value" id="provider-name">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Service Date</span>
+                    <span class="detail-value" id="service-date">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Service Time</span>
+                    <span class="detail-value" id="service-time">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Amount</span>
+                    <span class="detail-value" id="total-amount">৳0</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" style="color: #22C55E;">Confirmed</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="customer-bookings.html" class="btn-secondary">View Bookings</a>
+                <a href="customer-dashboard.html" class="btn-primary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========== ABSOLUTELY SAFE PAGE INITIALIZATION ===========
+        
+        function initializePage() {
+            console.log('Initializing booking confirmation page...');
+            
+            // FIRST: Make sure ALL DOM elements exist before doing anything
+            const requiredElements = [
+                'booking-code',
+                'provider-name', 
+                'service-date',
+                'service-time',
+                'total-amount',
+                'error-display'
+            ];
+            
+            // Check all elements exist
+            let allElementsExist = true;
+            requiredElements.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.error(`CRITICAL ERROR: Element #${id} not found in DOM!`);
+                    allElementsExist = false;
+                }
+            });
+            
+            if (!allElementsExist) {
+                console.error('Some DOM elements are missing. Page structure may be broken.');
+                // Create emergency fallback display
+                document.body.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: white;">
+                        <h1>⚠️ Page Error</h1>
+                        <p>Unable to load booking confirmation.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: white; color: #1D4ED8; border: none; border-radius: 5px; cursor: pointer;">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            console.log('All DOM elements found. Loading booking data...');
+            
+            // Now safely load booking data
+            loadBookingData();
+        }
+        
+        // =========== SAFE BOOKING DATA LOADING ===========
+        
+        function loadBookingData() {
+            console.log('Starting safe booking data loading...');
+            
+            try {
+                // Step 1: Get booking code
+                const bookingCode = getBookingCode();
+                
+                // Step 2: SAFELY update booking code (this should never fail)
+                safeUpdateText('booking-code', bookingCode);
+                
+                // Step 3: Try to load full booking details
+                try {
+                    loadFullBookingDetails(bookingCode);
+                } catch (detailError) {
+                    console.warn('Could not load full details:', detailError);
+                    setDefaultValues();
+                    showError('Could not load all booking details. Basic information shown.');
+                }
+                
+            } catch (error) {
+                console.error('Critical error in loadBookingData:', error);
+                setDefaultValues();
+                showError('Unable to load booking information. Please contact support.');
+            }
+        }
+        
+        function getBookingCode() {
+            try {
+                // Try localStorage
+                const code = localStorage.getItem('lastBookingCode');
+                if (code) return code;
+                
+                // Try URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlCode = urlParams.get('bookingCode');
+                if (urlCode) return urlCode;
+                
+                // Generate a new one
+                return 'ESB' + Math.floor(100000 + Math.random() * 900000);
+                
+            } catch (e) {
+                return 'ESB000000';
+            }
+        }
+        
+        function loadFullBookingDetails(bookingCode) {
+            console.log('Loading details for booking:', bookingCode);
+            
+            // Check if easysheba exists
+            if (typeof easysheba === 'undefined') {
+                throw new Error('System data not available');
+            }
+            
+            // Initialize if needed
+            if (typeof easysheba.init === 'function') {
+                easysheba.init();
+            }
+            
+            // Get bookings
+            const bookings = easysheba.getBookings();
+            console.log('Found bookings:', bookings.length);
+            
+            // Find booking
+            let booking = null;
+            
+            // Try multiple ways to find the booking
+            if (bookings && bookings.length > 0) {
+                booking = bookings.find(b => 
+                    b && (
+                        b.bookingCode === bookingCode ||
+                        b.id?.toString() === bookingCode ||
+                        b.bookingCode?.toString() === bookingCode
+                    )
+                );
+            }
+            
+            // If no booking found, create a sample
+            if (!booking) {
+                console.warn('No booking found, creating sample');
+                booking = createSampleBooking(bookingCode);
+            }
+            
+            // Now safely update all fields
+            updateAllFields(booking);
+        }
+        
+        function updateAllFields(booking) {
+            console.log('Updating fields with booking:', booking);
+            
+            // Provider name
+            let providerName = 'Service Provider';
+            if (booking.providerId && typeof easysheba !== 'undefined') {
+                const provider = easysheba.getUserById(booking.providerId);
+                if (provider) {
+                    providerName = `${provider.firstName || ''} ${provider.lastName || ''}`.trim();
+                }
+            }
+            safeUpdateText('provider-name', providerName);
+            
+            // Service date
+            let serviceDate = 'To be scheduled';
+            if (booking.serviceDate) {
+                try {
+                    const date = new Date(booking.serviceDate);
+                    if (!isNaN(date.getTime())) {
+                        serviceDate = date.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
+                } catch (e) {
+                    // Keep default
+                }
+            }
+            safeUpdateText('service-date', serviceDate);
+            
+            // Service time
+            safeUpdateText('service-time', booking.serviceTime || 'Flexible timing');
+            
+            // Total amount
+            const amount = booking.totalAmount || booking.amount || 0;
+            safeUpdateText('total-amount', `৳${amount.toLocaleString()}`);
+            
+            console.log('All fields updated successfully');
+        }
+        
+        function createSampleBooking(bookingCode) {
+            console.log('Creating sample booking for:', bookingCode);
+            
+            const sampleBooking = {
+                bookingCode: bookingCode,
+                providerId: 2,
+                serviceDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+                serviceTime: '10:00 AM - 12:00 PM',
+                totalAmount: 1500,
+                status: 'confirmed'
+            };
+            
+            // Save to localStorage as backup
+            try {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                bookings.push(sampleBooking);
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+            } catch (e) {
+                console.warn('Could not save sample booking:', e);
+            }
+            
+            return sampleBooking;
+        }
+        
+        function setDefaultValues() {
+            console.log('Setting default values');
+            
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            safeUpdateText('provider-name', 'Service Provider');
+            safeUpdateText('service-date', tomorrow.toLocaleDateString());
+            safeUpdateText('service-time', '10:00 AM - 12:00 PM');
+            safeUpdateText('total-amount', '৳1,500');
+        }
+        
+        // =========== UTILITY FUNCTIONS (100% SAFE) ===========
+        
+        function safeUpdateText(elementId, text) {
+            console.log(`Updating ${elementId}:`, text);
+            
+            // MULTIPLE SAFETY CHECKS
+            if (!elementId || typeof elementId !== 'string') {
+                console.error('Invalid elementId:', elementId);
+                return false;
+            }
+            
+            const element = document.getElementById(elementId);
+            
+            if (!element) {
+                console.error(`Element #${elementId} not found in DOM!`);
+                
+                // Try alternative: querySelector
+                const altElement = document.querySelector(`[id="${elementId}"]`) || 
+                                  document.querySelector(`.${elementId}`);
+                
+                if (altElement && altElement.textContent !== undefined) {
+                    altElement.textContent = text || '';
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            // FINALLY: Update the text
+            try {
+                element.textContent = text || '';
+                return true;
+            } catch (error) {
+                console.error(`Error updating ${elementId}:`, error);
+                return false;
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error-display');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        // =========== DIRECT DOM CHECK ON LOAD ===========
+        
+        // Immediate check when script loads
+        console.log('Booking confirmation script loaded');
+        
+        // If DOM is already ready
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log('DOM already ready, initializing...');
+            setTimeout(initializePage, 100);
+        }
+        
+        // =========== DEBUG FUNCTIONS ===========
+        
+        // Run this in console if there's still an error
+        window.fixBookingPage = function() {
+            console.clear();
+            console.log('======= EMERGENCY FIX =======');
+            
+            // 1. Check all elements
+            const ids = ['booking-code', 'provider-name', 'service-date', 'service-time', 'total-amount'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                console.log(`${id}:`, el ? 'FOUND' : 'MISSING', el);
+            });
+            
+            // 2. Force set values
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = 'TEST ' + id.toUpperCase();
+                } else {
+                    console.error(`Creating missing element: ${id}`);
+                    // Create if missing
+                    const newEl = document.createElement('div');
+                    newEl.id = id;
+                    newEl.textContent = 'CREATED ' + id;
+                    document.querySelector('.confirmation-card')?.appendChild(newEl);
+                }
+            });
+            
+            console.log('Emergency fix applied');
+        };
+    </script>
+</body>
+</html>

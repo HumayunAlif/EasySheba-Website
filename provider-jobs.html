@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - My Jobs</title>
+    <script src="data-storage.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1D4ED8;
+            --secondary: #22C55E;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .app-header {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: #f1f5f9;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 14px;
+        }
+
+        .profile-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .profile-btn i.fa-chevron-down {
+            font-size: 12px;
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-dropdown:hover .profile-btn i.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-info p {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 1px solid #e5e7eb;
+        }
+
+        .profile-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 8px 0;
+        }
+
+        .logout-item {
+            color: #ef4444;
+        }
+
+        .logout-item:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 88px;
+            padding: 24px;
+            padding-bottom: 80px;
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(29, 78, 216, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-content h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-content p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .verification-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .verification-status.verified {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .verification-status.pending {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.requests { background: var(--warning); }
+        .stat-icon.active { background: var(--primary); }
+        .stat-icon.earnings { background: var(--success); }
+        .stat-icon.completed { background: #8b5cf6; }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .stat-info p {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Jobs Tabs */
+        .jobs-tabs {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 24px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 20px 0;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            margin-right: 32px;
+            position: relative;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e5e7eb;
+            color: #6b7280;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .tab.active .tab-badge {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            padding: 24px;
+        }
+
+        /* Jobs List */
+        .jobs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .job-card.pending { border-color: var(--warning); }
+        .job-card.confirmed { border-color: var(--primary); }
+        .job-card.assigned { border-color: var(--secondary); }
+        .job-card.completed { border-color: var(--success); }
+        .job-card.cancelled { border-color: var(--danger); }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .job-code {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 14px;
+            background: rgba(29, 78, 216, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .job-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-confirmed { background: #dbeafe; color: #1e40af; }
+        .status-assigned { background: #d1fae5; color: #065f46; }
+        .status-completed { background: #dcfce7; color: #16a34a; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+
+        .job-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .customer-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .customer-details p {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #e5e7eb;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #9ca3af;
+        }
+
+        .empty-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9ca3af;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(29, 78, 216, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--primary); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-card {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .job-details {
+                grid-template-columns: 1fr;
+            }
+
+            .job-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header-actions {
+                gap: 12px;
+            }
+
+            .profile-btn .user-info {
+                display: none;
+            }
+
+            .dropdown-menu {
+                position: fixed;
+                top: 88px;
+                right: 16px;
+                left: 16px;
+                width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-header {
+                padding: 0 16px;
+            }
+
+            .tab {
+                margin-right: 16px;
+            }
+
+            .app-header {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-icon">🛠️</div>
+            <div class="logo-text">EasySheba</div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="notification-btn" onclick="showNotifications()">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-count">0</span>
+            </div>
+            
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown">
+                <button class="profile-btn" id="profile-menu-btn">
+                    <div class="user-avatar" id="user-avatar">PU</div>
+                    <div class="user-info">
+                        <h4 id="user-name">Provider</h4>
+                        <p id="user-status">Online</p>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                
+                <div class="dropdown-menu" id="profile-dropdown-menu">
+                    <a href="#" class="dropdown-item" onclick="editProfile()">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </a>
+                    <a href="provider-earnings.html" class="dropdown-item">
+                        <i class="fas fa-chart-line"></i> Earnings Report
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="openSettings()">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item logout-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Card -->
+        <section class="welcome-card">
+            <div class="welcome-content">
+                <h1 id="welcome-message">Welcome Back!</h1>
+                <p id="provider-info">Manage your jobs and grow your business</p>
+            </div>
+            <div class="verification-status pending" id="verification-status">
+                <i class="fas fa-clock"></i>
+                <span>Awaiting Verification</span>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card" onclick="switchTab('requests')">
+                <div class="stat-icon requests">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="job-requests">0</h3>
+                    <p>Job Requests</p>
+                </div>
+            </div>
+            
+            <div class="stat-card" onclick="switchTab('active')">
+                <div class="stat-icon active">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="active-jobs">0</h3>
+                    <p>Active Jobs</p>
+                </div>
+            </div>
+            
+            <div class="stat-card" onclick="window.location.href='provider-earnings.html'">
+                <div class="stat-icon earnings">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-earnings">৳0</h3>
+                    <p>Total Earnings</p>
+                </div>
+            </div>
+            
+            <div class="stat-card" onclick="switchTab('history')">
+                <div class="stat-icon completed">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="completed-jobs">0</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Tabs -->
+        <div class="jobs-tabs">
+            <div class="tabs-header">
+                <div class="tab active" onclick="switchTab('requests')">
+                    Job Requests <span class="tab-badge" id="requests-count">0</span>
+                </div>
+                <div class="tab" onclick="switchTab('active')">
+                    Active Jobs <span class="tab-badge" id="active-count">0</span>
+                </div>
+                <div class="tab" onclick="switchTab('history')">
+                    Job History <span class="tab-badge" id="history-count">0</span>
+                </div>
+            </div>
+            
+            <div class="tab-content">
+                <div class="jobs-list" id="jobs-container">
+                    <!-- Jobs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="provider-jobs.html" class="nav-item active">
+            <i class="fas fa-tasks"></i>
+            <span>Jobs</span>
+        </a>
+        <a href="provider-earnings.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Earnings</span>
+        </a>
+        <a href="customer-dashboard.html" class="nav-item">
+            <i class="fas fa-search"></i>
+            <span>Find Jobs</span>
+        </a>
+        <a href="#" class="nav-item" onclick="editProfile()">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        let currentProvider = null;
+        let currentTab = 'requests';
+        let autoRefreshInterval = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            try {
+                currentProvider = JSON.parse(userData);
+                if (currentProvider.userType !== 'provider') {
+                    window.location.href = currentProvider.userType === 'admin' ? 
+                        'admin-dashboard.html' : 'customer-dashboard.html';
+                    return;
+                }
+
+                initializeProviderDashboard();
+
+                // Auto-refresh for new job requests
+                autoRefreshInterval = setInterval(() => {
+                    if (currentTab === 'requests') {
+                        loadJobs();
+                    }
+                }, 30000); // Every 30 seconds
+
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Clean up interval when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+
+        function initializeProviderDashboard() {
+            // Set user info
+            document.getElementById('user-name').textContent = 
+                `${currentProvider.firstName} ${currentProvider.lastName}`;
+            document.getElementById('user-avatar').textContent = 
+                (currentProvider.firstName.charAt(0) + currentProvider.lastName.charAt(0)).toUpperCase();
+            
+            // Set status based on availability
+            const statusElement = document.getElementById('user-status');
+            if (currentProvider.isAvailable) {
+                statusElement.textContent = 'Available';
+                statusElement.style.color = '#22C55E';
+            } else {
+                statusElement.textContent = 'Busy';
+                statusElement.style.color = '#EF4444';
+            }
+            
+            // Set provider info
+            const service = easysheba.getServices().find(s => s.category === currentProvider.serviceCategory);
+            document.getElementById('provider-info').textContent = 
+                `${service?.name || 'Service Provider'} • ${currentProvider.areas || 'Available for jobs'}`;
+            
+            // Set verification status
+            const verificationStatus = document.getElementById('verification-status');
+            if (currentProvider.isVerified) {
+                verificationStatus.className = 'verification-status verified';
+                verificationStatus.innerHTML = '<i class="fas fa-check-circle"></i> <span>Verified Provider</span>';
+            } else {
+                verificationStatus.className = 'verification-status pending';
+                verificationStatus.innerHTML = '<i class="fas fa-clock"></i> <span>Awaiting Verification</span>';
+            }
+            
+            // Load stats
+            loadProviderStats();
+            
+            // Load jobs
+            loadJobs();
+            
+            // Load notifications count
+            loadNotificationCount();
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('profile-dropdown-menu');
+                const profileBtn = document.getElementById('profile-menu-btn');
+                
+                if (!profileBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.style.opacity = '0';
+                    dropdown.style.visibility = 'hidden';
+                    dropdown.style.transform = 'translateY(-10px)';
+                }
+            });
+        }
+
+        function loadProviderStats() {
+            const providerStats = easysheba.getProviderStats(currentProvider.id);
+            
+            const jobRequests = easysheba.getBookingsByProvider(currentProvider.id)
+                .filter(b => b.status === 'pending').length;
+            
+            const activeJobs = easysheba.getBookingsByProvider(currentProvider.id)
+                .filter(b => b.status === 'confirmed' || b.status === 'assigned').length;
+            
+            const completedJobs = easysheba.getBookingsByProvider(currentProvider.id)
+                .filter(b => b.status === 'completed').length;
+            
+            document.getElementById('job-requests').textContent = jobRequests;
+            document.getElementById('active-jobs').textContent = activeJobs;
+            document.getElementById('total-earnings').textContent = `৳${currentProvider.earnings || 0}`;
+            document.getElementById('completed-jobs').textContent = completedJobs;
+            
+            // Update tab badges
+            document.getElementById('requests-count').textContent = jobRequests;
+            document.getElementById('active-count').textContent = activeJobs;
+            document.getElementById('history-count').textContent = completedJobs;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            event.target.closest('.tab').classList.add('active');
+            
+            // Load jobs for this tab
+            loadJobs();
+        }
+
+        function loadJobs() {
+            const bookings = easysheba.getBookingsByProvider(currentProvider.id);
+            let filteredBookings = [];
+            
+            // Filter by current tab
+            switch(currentTab) {
+                case 'requests':
+                    filteredBookings = bookings.filter(b => b.status === 'pending');
+                    break;
+                case 'active':
+                    filteredBookings = bookings.filter(b => 
+                        b.status === 'confirmed' || b.status === 'assigned'
+                    );
+                    break;
+                case 'history':
+                    filteredBookings = bookings.filter(b => 
+                        b.status === 'completed' || b.status === 'cancelled'
+                    );
+                    break;
+            }
+            
+            // Sort by date (newest first)
+            filteredBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            const container = document.getElementById('jobs-container');
+            
+            if (filteredBookings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-${currentTab === 'requests' ? 'bell-slash' : 
+                                           currentTab === 'active' ? 'clipboard-list' : 
+                                           'history'}"></i>
+                        </div>
+                        <h3 class="empty-title">
+                            ${currentTab === 'requests' ? 'No Job Requests' :
+                              currentTab === 'active' ? 'No Active Jobs' :
+                              'No Job History'}
+                        </h3>
+                        <p class="empty-description">
+                            ${currentTab === 'requests' ? 'You will see new job requests here when customers book your services.' :
+                              currentTab === 'active' ? 'Accepted jobs will appear here. Accept some job requests to get started.' :
+                              'Completed and cancelled jobs will appear here.'}
+                        </p>
+                        ${currentTab === 'requests' ? '' : `
+                            <button class="btn btn-primary" onclick="switchTab('requests')">
+                                <i class="fas fa-bell"></i> Check Job Requests
+                            </button>
+                        `}
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            filteredBookings.forEach(booking => {
+                const customer = easysheba.getUserById(booking.customerId);
+                const customerName = customer ? `${customer.firstName} ${customer.lastName}` : 'Customer';
+                const customerInitials = customer ? 
+                    (customer.firstName.charAt(0) + customer.lastName.charAt(0)).toUpperCase() : 'C';
+                
+                const bookingDate = new Date(booking.serviceDate).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Status mapping
+                const statusMap = {
+                    'pending': { class: 'status-pending', text: 'Pending', cardClass: 'pending' },
+                    'confirmed': { class: 'status-confirmed', text: 'Confirmed', cardClass: 'confirmed' },
+                    'assigned': { class: 'status-assigned', text: 'Assigned', cardClass: 'assigned' },
+                    'completed': { class: 'status-completed', text: 'Completed', cardClass: 'completed' },
+                    'cancelled': { class: 'status-cancelled', text: 'Cancelled', cardClass: 'cancelled' }
+                };
+                
+                const status = statusMap[booking.status] || { class: 'status-pending', text: 'Pending', cardClass: 'pending' };
+                
+                // Calculate time ago
+                const createdAt = new Date(booking.createdAt);
+                const now = new Date();
+                const diffMs = now - createdAt;
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const timeAgo = diffHours < 1 ? 'Just now' : 
+                               diffHours < 24 ? `${diffHours}h ago` : 
+                               `${Math.floor(diffHours / 24)}d ago`;
+                
+                html += `
+                    <div class="job-card ${status.cardClass}">
+                        <div class="job-header">
+                            <div>
+                                <div class="job-code">${booking.bookingCode}</div>
+                                <small style="color: #6b7280; font-size: 12px;">${timeAgo}</small>
+                            </div>
+                            <span class="job-status ${status.class}">${status.text}</span>
+                        </div>
+                        
+                        <div class="job-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Service Date</span>
+                                <span class="detail-value">${bookingDate}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Service Time</span>
+                                <span class="detail-value">${booking.serviceTime}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Duration</span>
+                                <span class="detail-value">${booking.hours} hour${booking.hours > 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Amount</span>
+                                <span class="detail-value">৳${booking.totalAmount}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="customer-info">
+                            <div class="customer-avatar">${customerInitials}</div>
+                            <div class="customer-details">
+                                <h4>${customerName}</h4>
+                                <p>${customer?.phone || 'No phone provided'}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="job-actions">
+                            ${booking.status === 'pending' ? `
+                                <button class="btn btn-success" onclick="acceptJob('${booking.bookingCode}')">
+                                    <i class="fas fa-check"></i> Accept
+                                </button>
+                                <button class="btn btn-danger" onclick="rejectJob('${booking.bookingCode}')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="btn btn-outline" onclick="chatWithCustomer(${booking.customerId})">
+                                    <i class="fas fa-comment"></i> Chat
+                                </button>
+                            ` : ''}
+                            
+                            ${booking.status === 'confirmed' ? `
+                                <button class="btn btn-primary" onclick="startJob('${booking.bookingCode}')">
+                                    <i class="fas fa-play"></i> Start Job
+                                </button>
+                                <button class="btn btn-warning" onclick="rescheduleJob('${booking.bookingCode}')">
+                                    <i class="fas fa-calendar-alt"></i> Reschedule
+                                </button>
+                                <button class="btn btn-outline" onclick="chatWithCustomer(${booking.customerId})">
+                                    <i class="fas fa-comment"></i> Chat
+                                </button>
+                            ` : ''}
+                            
+                            ${booking.status === 'assigned' ? `
+                                <button class="btn btn-success" onclick="completeJob('${booking.bookingCode}')">
+                                    <i class="fas fa-check-circle"></i> Complete
+                                </button>
+                                <button class="btn btn-outline" onclick="chatWithCustomer(${booking.customerId})">
+                                    <i class="fas fa-comment"></i> Chat
+                                </button>
+                            ` : ''}
+                            
+                            ${(booking.status === 'completed' || booking.status === 'cancelled') ? `
+                                <button class="btn btn-outline" onclick="viewJobDetails('${booking.bookingCode}')">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button class="btn btn-outline" onclick="chatWithCustomer(${booking.customerId})">
+                                    <i class="fas fa-comment"></i> Chat
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function acceptJob(bookingCode) {
+            if (confirm('Accept this job request?')) {
+                easysheba.updateBookingStatus(bookingCode, 'confirmed');
+                showToast('Job accepted successfully!', 'success');
+                loadProviderStats();
+                loadJobs();
+            }
+        }
+
+        function rejectJob(bookingCode) {
+            if (confirm('Reject this job request?')) {
+                easysheba.updateBookingStatus(bookingCode, 'cancelled');
+                showToast('Job rejected', 'info');
+                loadProviderStats();
+                loadJobs();
+            }
+        }
+
+        function startJob(bookingCode) {
+            if (confirm('Start this job? This will notify the customer.')) {
+                easysheba.updateBookingStatus(bookingCode, 'assigned');
+                showToast('Job started! Customer notified.', 'success');
+                loadProviderStats();
+                loadJobs();
+            }
+        }
+
+        function completeJob(bookingCode) {
+            if (confirm('Mark this job as completed?')) {
+                easysheba.updateBookingStatus(bookingCode, 'completed');
+                
+                // Update provider earnings
+                const booking = easysheba.getBookingByCode(bookingCode);
+                const provider = easysheba.getUserById(currentProvider.id);
+                const newEarnings = (provider.earnings || 0) + (booking.totalAmount || 0);
+                
+                easysheba.updateUser(currentProvider.id, { 
+                    earnings: newEarnings,
+                    totalEarnings: (provider.totalEarnings || 0) + (booking.totalAmount || 0)
+                });
+                
+                // Update current user in localStorage
+                currentProvider.earnings = newEarnings;
+                localStorage.setItem('currentUser', JSON.stringify(currentProvider));
+                
+                showToast('Job completed! Earnings added to your account.', 'success');
+                loadProviderStats();
+                loadJobs();
+            }
+        }
+
+        function rescheduleJob(bookingCode) {
+            const newDate = prompt('Enter new date (YYYY-MM-DD):');
+            const newTime = prompt('Enter new time (HH:MM):');
+            
+            if (newDate && newTime) {
+                // Update booking with new date/time
+                const booking = easysheba.getBookingByCode(bookingCode);
+                if (booking) {
+                    booking.serviceDate = newDate;
+                    booking.serviceTime = newTime;
+                    booking.updatedAt = new Date().toISOString();
+                    
+                    // Update in storage
+                    const bookings = easysheba.getBookings();
+                    const index = bookings.findIndex(b => b.bookingCode === bookingCode);
+                    if (index !== -1) {
+                        bookings[index] = booking;
+                        localStorage.setItem('bookings', JSON.stringify(bookings));
+                        
+                        // Notify customer
+                        easysheba.addNotification({
+                            userId: booking.customerId,
+                            title: 'Job Rescheduled',
+                            message: `Provider has rescheduled your booking to ${newDate} at ${newTime}`,
+                            type: 'info',
+                            bookingId: booking.id,
+                            isRead: false
+                        });
+                        
+                        showToast('Job rescheduled successfully!', 'success');
+                        loadJobs();
+                    }
+                }
+            }
+        }
+
+        function chatWithCustomer(customerId) {
+            localStorage.setItem('chatWithCustomer', customerId);
+            window.location.href = 'chat.html';
+        }
+
+        function viewJobDetails(bookingCode) {
+            localStorage.setItem('viewBookingCode', bookingCode);
+            window.location.href = 'booking-details.html';
+        }
+
+        function loadNotificationCount() {
+            const notifications = easysheba.getNotificationsByUser(currentProvider.id);
+            const unreadCount = notifications.filter(n => !n.isRead).length;
+            
+            const badge = document.getElementById('notification-count');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function showNotifications() {
+            const notifications = easysheba.getNotificationsByUser(currentProvider.id);
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                display: flex;
+                justify-content: flex-end;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    width: 400px;
+                    background: white;
+                    height: 100%;
+                    padding: 24px;
+                    overflow-y: auto;
+                    box-shadow: -4px 0 30px rgba(0,0,0,0.1);
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h3 style="font-size: 20px; font-weight: 700; color: var(--dark);">
+                            <i class="fas fa-bell"></i> Notifications
+                        </h3>
+                        <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" 
+                                style="background: none; border: none; font-size: 24px; color: #6b7280; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    ${notifications.length === 0 ? `
+                        <div style="text-align: center; padding: 40px; color: #9ca3af;">
+                            <i class="far fa-bell-slash" style="font-size: 48px; margin-bottom: 16px;"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    ` : notifications.map(notif => `
+                        <div style="
+                            padding: 16px;
+                            border-radius: 12px;
+                            background: ${notif.isRead ? '#f9fafb' : '#f0f9ff'};
+                            margin-bottom: 12px;
+                            border-left: 4px solid ${notif.type === 'success' ? '#10b981' : notif.type === 'error' ? '#ef4444' : '#1D4ED8'};
+                            cursor: pointer;
+                        " onclick="markNotificationAsRead(${notif.id})">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <strong style="color: var(--dark);">${notif.title}</strong>
+                                <small style="color: #9ca3af;">${new Date(notif.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>
+                            </div>
+                            <p style="color: #6b7280; font-size: 14px; margin: 0;">${notif.message}</p>
+                            ${!notif.isRead ? '<div style="width: 8px; height: 8px; background: #1D4ED8; border-radius: 50%; margin-top: 8px;"></div>' : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        function markNotificationAsRead(notificationId) {
+            easysheba.markNotificationAsRead(notificationId);
+            loadNotificationCount();
+            showToast('Notification marked as read', 'success');
+        }
+
+        function editProfile() {
+            // Set flag that we're editing profile
+            localStorage.setItem('editingProfile', 'true');
+            window.location.href = 'provider-setup.html';
+        }
+
+        function openSettings() {
+            showToast('Settings page coming soon!', 'info');
+            // You can create a settings.html page later
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear all auth data
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                localStorage.removeItem('providerData');
+                
+                // Show logout message
+                showToast('Logged out successfully!', 'success');
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 1000);
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

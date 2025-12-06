@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasySheba - Manage Providers</title>
+    <script src="data-storage.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            min-height: 100vh;
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(29, 78, 216, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1D4ED8;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .screen-content {
+            padding-top: 80px;
+            padding-bottom: 20px;
+            min-height: 100vh;
+        }
+
+        .providers-list {
+            padding: 0 1rem;
+        }
+
+        .provider-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 8px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .provider-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .provider-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1D4ED8 0%, #22C55E 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .provider-details h4 {
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px 0;
+        }
+
+        .provider-details p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .verified { background: #dcfce7; color: #16a34a; }
+        .pending { background: #fef3c7; color: #92400E; }
+        .active { background: #dbeafe; color: #1D4ED8; }
+
+        .provider-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .verify-btn { background: #dcfce7; color: #16a34a; }
+        .view-btn { background: #dbeafe; color: #1D4ED8; }
+        .deactivate-btn { background: #fee2e2; color: #dc2626; }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            right: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            z-index: 70;
+            font-weight: 500;
+            background: #22C55E;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <h1 class="header-title">Manage Providers</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="screen-content">
+        <div class="providers-list" id="providers-container">
+            <!-- Providers will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if admin
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.userType !== 'admin') {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            loadProviders();
+        });
+
+        function loadProviders() {
+            const providers = easysheba.getProviders();
+            const container = document.getElementById('providers-container');
+            
+            let html = '';
+            providers.forEach(provider => {
+                const initials = provider.firstName.charAt(0) + (provider.lastName.charAt(0) || '');
+                const joinDate = new Date(provider.createdAt).toLocaleDateString();
+                
+                html += `
+                    <div class="provider-card">
+                        <div class="provider-header">
+                            <div class="provider-info">
+                                <div class="provider-avatar">${initials}</div>
+                                <div class="provider-details">
+                                    <h4>
+                                        ${provider.firstName} ${provider.lastName}
+                                        <span class="status-badge ${provider.isVerified ? 'verified' : 'pending'}">
+                                            ${provider.isVerified ? 'Verified' : 'Pending'}
+                                        </span>
+                                        <span class="status-badge active">
+                                            ${provider.isActive ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </h4>
+                                    <p>📧 ${provider.email} • 📞 ${provider.phone}</p>
+                                    <p>Service: ${provider.serviceCategory || 'Not set'} • Rate: ৳${provider.hourlyRate || 0}/hour</p>
+                                    <p>Experience: ${provider.experience || 0} years • Areas: ${provider.areas || 'Not specified'}</p>
+                                    <p>Joined: ${joinDate} • Earnings: ৳${provider.earnings || 0}</p>
+                                </div>
+                            </div>
+                            <div class="provider-actions">
+                                ${!provider.isVerified ? 
+                                    `<button class="action-btn verify-btn" onclick="verifyProvider(${provider.id})">Verify</button>` : ''}
+                                <button class="action-btn view-btn" onclick="viewProviderDetails(${provider.id})">View</button>
+                                <button class="action-btn deactivate-btn" onclick="toggleProviderStatus(${provider.id})">
+                                    ${provider.isActive ? 'Deactivate' : 'Activate'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html || '<p style="text-align: center; color: white;">No providers found</p>';
+        }
+
+        function verifyProvider(providerId) {
+            if (confirm('Verify this provider?')) {
+                easysheba.verifyProvider(providerId);
+                loadProviders();
+                showToast('Provider verified successfully!');
+            }
+        }
+
+        function toggleProviderStatus(providerId) {
+            const providers = easysheba.getProviders();
+            const provider = providers.find(p => p.id === providerId);
+            if (provider) {
+                const newStatus = !provider.isActive;
+                if (confirm(`${newStatus ? 'Activate' : 'Deactivate'} this provider?`)) {
+                    easysheba.updateUser(providerId, { isActive: newStatus });
+                    loadProviders();
+                    showToast(`Provider ${newStatus ? 'activated' : 'deactivated'}!`);
+                }
+            }
+        }
+
+        function viewProviderDetails(providerId) {
+            localStorage.setItem('viewProviderId', providerId);
+            // You can create a provider-details.html page later
+            showToast('Provider details feature coming soon!');
+        }
+
+        function goBack() {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'auth.html';
+            }
+        }
+    </script>
+</body>
+</html>
